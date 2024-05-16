@@ -4,15 +4,19 @@ import { useEffect, useState } from "react";
 import { useURLID } from "./useURLID";
 import axios from "axios";
 
+const domainURL = "https://hassala.qistar.rent";
+const mediaURl = `${domainURL}/storage/`;
 const api = axios.create({
-  baseURL: "https://hassala.qistar.rent/api/",
+  baseURL: `${domainURL}/api/`,
 });
 
 const BoxPage = () => {
   const { id } = useURLID();
   const [boxData, setBoxData] = useState("");
   const [isLoading, SetLoading] = useState(false);
-  const [associationLogo, setassociationLogo] = useState("");
+  const [isImage, setImage] = useState(false);
+  const [associationLogo, setassociationLogo] = useState(null);
+  const [donationPercent, setdonationPercent] = useState(0);
 
   useEffect(() => {
     const fetchDonationBoxData = async () => {
@@ -21,6 +25,7 @@ const BoxPage = () => {
         const response = await api.get(`hassala/${id}`);
         // console.log(response.data.data);
         setBoxData(response.data.data);
+        setassociationLogo(response.data.data.association.logo);
       } catch (err) {
         if (err.response) {
           console.log(err.response.data);
@@ -32,49 +37,64 @@ const BoxPage = () => {
       } finally {
         SetLoading(false);
       }
-      setassociationLogo(boxData.association.logo);
     };
     fetchDonationBoxData();
   }, [id]);
-
   function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   function percentage(partial, total) {
-    return `${(100 * partial) / total}%`;
+    return `${(100 * Math.round(partial)) / Math.round(total)}%`;
   }
   return (
     <>
       {isLoading ? (
         <div className="loading">
-          <div class="grid min-h-screen place-content-center">
-            <div class="flex items-center gap-2 text-gray-500">
-              <span class="h-6 w-6 block rounded-full border-4 border-t-blue-300 animate-spin"></span>
+          <div className="grid min-h-screen place-content-center">
+            <div className="flex items-center gap-2 text-gray-500">
+              <span className="h-6 w-6 block rounded-full border-4 border-t-blue-300 animate-spin"></span>
               loading...
             </div>
           </div>
         </div>
       ) : (
         <div className="max-sm:h-auto w-screen h-screen overflow-hidden">
-          {/* <img
-            src={`https://hassala.qistar.rent/storage/${boxData.image}`}
-            alt="stockimage"
-            className="absolute top-0 left-0 w-full h-full object-cover -z-20"
-          /> */}
-          <video
-            src="https://cdn.pixabay.com/video/2020/03/13/33631-398856295_large.mp4"
-            autoPlay
-            loop
-            muted
-            className="absolute top-0 left-0 object-cover w-screen h-screen -z-20"
-          ></video>
+          {isImage ? (
+            <div className="absolute  top-0 left-0 -z-20 h-screen w-full">
+              <img
+                src={`https://hassala.qistar.rent/storage/${boxData.image}`}
+                alt="stockimage"
+                className=" w-full h-full object-cover "
+                loading="lazy"
+              />
+            </div>
+          ) : (
+            <video
+              src="https://cdn.pixabay.com/video/2020/03/13/33631-398856295_large.mp4"
+              autoPlay
+              loop
+              muted
+              className="absolute top-0 left-0 object-cover w-screen h-screen -z-20"
+            ></video>
+          )}
+
           <div className="-z-10 absolute top-0 left-0 h-screen w-screen bg-gradient-to-t from-black/80 to-black/50"></div>
           <div className="w-full h-full grid grid-cols-2 max-sm:grid-cols-1 z-50 mx-auto justify-center items-center">
-            <div className="px-20 flex flex-col  gap-8 ">
-              <h1 className="text-6xl font-kufam font-black text-white text-right leading-tight">
-                {boxData.hero_title}
-              </h1>
+            <div className="px-20 flex flex-col gap-4">
+              <div>
+                <p className="text-white font-kufam text-md mb-8 px-4 py-3 w-fit rounded-full border border-gray-800 bg-gray-50/10 flex gap-4">
+                  <span className="text-sm mt-1">&#x6DD;</span>
+                  <marquee className="mt-1">
+                    لَنْ تَنَالُوا الْبِرَّ حَتَّى تُنْفِقُوا مِمَّا تُحِبُّونَ{" "}
+                  </marquee>
+
+                  <span className="mt-1">&#x6DD;</span>
+                </p>
+                <h1 className="text-6xl font-kufam font-black text-white text-right leading-tight">
+                  {boxData.hero_title}
+                </h1>
+              </div>
               {/* <progress
               dir="rtl"
               max="100"
@@ -82,33 +102,15 @@ const BoxPage = () => {
               value="65"
               className="animate-pulse"
             ></progress>  */}
-              <div className="relative mb-5">
-                <div className="rounded-full border border-4 border-white p-1">
-                  <div
-                    className={`flex h-16 items-center justify-end rounded-full animate-pulse duration-300 bg-gradient-to-l from-lime-500 to-lime-400 leading-none 
-                     min-w-[20%]`}
-                    style={{
-                      width: `${percentage(
-                        Math.round(boxData.donations_sum_amount),
-                        Math.round(boxData.target)
-                      )}`,
-                    }}
-                  >
-                    <span className="p-1 ml-2 text-white font-bold">
-                      {percentage(
-                        Math.round(boxData.donations_sum_amount),
-                        Math.round(boxData.target)
-                      )}
-                    </span>
-                  </div>
+              <div className="relative my-5">
+                <div className="text-white font-kufam text-center font-bold pl-4 pt-6">
+                  إجمالي التبرعات{" "}
+                  {numberWithCommas(Math.round(boxData.donations_sum_amount))}
                 </div>
               </div>
-              <div className="text-white font-kufam">
-                إجمالي التبرعات {boxData.donations_sum_amount}
-              </div>
-              <div className="flex justify-between font-kufam">
+              <div className="flex justify-between font-kufam  p-6 border bg-black/20 border-gray-700 rounded-lg">
                 <div className="flex flex-col gap-4">
-                  <p className="bg-white text-green-500 px-2">المبغ المتبقي</p>
+                  <p className="text-white">المبغ المتبقي</p>
                   <p className="text-3xl font-bold text-white">
                     {boxData.donations_sum_amount
                       ? numberWithCommas(
@@ -121,7 +123,7 @@ const BoxPage = () => {
                   </p>
                 </div>
                 <div className="flex flex-col gap-4 text-white items-start px-2">
-                  <p className="bg-white text-green-500 px-2">المبغ المستهدف</p>
+                  <p className="text-white">المبغ المستهدف</p>
                   <p className="text-3xl font-bold text-left">
                     {numberWithCommas(Math.round(boxData.target))}
                     <span className="text-sm mr-2">ر.س</span>
@@ -131,30 +133,38 @@ const BoxPage = () => {
             </div>
             <div className=" w-full flex flex-col gap-6 h-f justify-center items-center">
               <div className="text-center text-white ">
-                <p className="text-2xl text-center mt-12 font-bold font-kufam">
+                <p className="text-2xl text-center mt-4 font-bold font-kufam">
                   للتبرع
                 </p>
                 <p>فقط إمسح ال QR Code</p>
               </div>
-              <div className="bg-white my-auto w-2/3 h-auto rounded-2xl p-6 flex flex-col gap-6 justify-center items-center ">
-                <div className="min-w-5/6 w-2/3 mx-auto">
-                  <img
-                    src={`https://hassala.qistar.rent/storage/${associationLogo}`}
-                    alt="association logo"
-                    className="w-full h-full object-fill max-h-20"
-                  />
+              <div className="bg-white my-auto w-2/3 h-auto rounded-3xl flex flex-col gap-6 justify-center items-center ">
+                <div className="w-full flex justify-center items-center rounded-t-3xl p-4 bg-zinc-100">
+                  <div className="w-auto  min-w-8/12 ">
+                    <img
+                      src={`${mediaURl}${associationLogo}`}
+                      alt="association logo"
+                      className="w-full h-full object-fill max-h-20"
+                      loading="lazy"
+                    />
+                  </div>
                 </div>
                 <div className="h-full w-full">
-                  <div>
+                  <div className="w-8/12 mx-auto">
                     <img
-                      src={boxData.qr_code}
+                      src={`${mediaURl}${boxData.qr_code}`}
                       alt="design"
                       className="w-full h-full"
                     />
                   </div>
                 </div>
-                <div className="w-3/5">
-                  <img src={paymentMethodsSVG} alt="payment methods logo" />
+
+                <div className=" bg-zinc-100  w-full p-6  rounded-3xl rounded-t-none flex justify-center">
+                  <img
+                    src={paymentMethodsSVG}
+                    alt="payment methods logo"
+                    className="w-2/3 h-full"
+                  />
                 </div>
               </div>
             </div>
