@@ -1,6 +1,6 @@
-import React from "react";
 import paymentMethodsSVG from "./assets/paymentMethods.svg";
 import { useEffect, useState } from "react";
+import ProgressBar from "./components/progressBar";
 import { useURLID } from "./useURLID";
 import axios from "axios";
 
@@ -10,13 +10,34 @@ const api = axios.create({
   baseURL: `${domainURL}/api/`,
 });
 
+type BoxData = {
+  id: number;
+  name_ar: string;
+  name_en: string;
+  description_ar: string | null;
+  description_en: string | null;
+  serial_no: string;
+  association_id: number;
+  status_id: number;
+  target: number;
+  image: string;
+  hero_title: string;
+  sub_title: string;
+  qr_code: string;
+  created_at: string;
+  updated_at: string;
+  media_type: string;
+  share_text: string;
+  quran: string;
+  donations_sum_amount: number;
+};
+
 const BoxPage = () => {
   const { id } = useURLID();
-  const [boxData, setBoxData] = useState("");
+  const [boxData, setBoxData] = useState<BoxData>({});
   const [isLoading, SetLoading] = useState(false);
   const [isImage, setImage] = useState(false);
   const [associationLogo, setassociationLogo] = useState(null);
-  const [donationPercent, setdonationPercent] = useState(0);
 
   useEffect(() => {
     const fetchDonationBoxData = async () => {
@@ -26,7 +47,8 @@ const BoxPage = () => {
         // console.log(response.data.data);
         setBoxData(response.data.data);
         setassociationLogo(response.data.data.association.logo);
-      } catch (err) {
+        setImage(false);
+      } catch (err: any) {
         if (err.response) {
           console.log(err.response.data);
           console.log(err.response.status);
@@ -40,11 +62,16 @@ const BoxPage = () => {
     };
     fetchDonationBoxData();
   }, [id]);
-  function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  // const donationCalcualions = () => {
+  //   if()
+  // }
+  function numberWithCommas(x: number) {
+    let num = Math.round(x);
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  function percentage(partial, total) {
+  function percentage(partial: number, total: number) {
     return `${(100 * Math.round(partial)) / Math.round(total)}%`;
   }
   return (
@@ -83,11 +110,11 @@ const BoxPage = () => {
           <div className="w-full h-full grid grid-cols-2 max-sm:grid-cols-1 z-50 mx-auto justify-center items-center">
             <div className="px-20 flex flex-col gap-4">
               <div>
-                <p className="text-white font-kufam text-md mb-8 px-4 py-3 w-fit rounded-full border border-gray-800 bg-gray-50/10 flex gap-4">
+                <p className="text-white font-kufam text-md mb-8 px-4 py-3 w-fit rounded-full border border-gray-800 bg-gray-50/10 flex gap-4 animate-marquee2">
                   <span className="text-sm mt-1">&#x6DD;</span>
-                  <marquee className="mt-1">
+                  <span className="mt-1">
                     لَنْ تَنَالُوا الْبِرَّ حَتَّى تُنْفِقُوا مِمَّا تُحِبُّونَ{" "}
-                  </marquee>
+                  </span>
 
                   <span className="mt-1">&#x6DD;</span>
                 </p>
@@ -102,10 +129,17 @@ const BoxPage = () => {
               value="65"
               className="animate-pulse"
             ></progress>  */}
+              <ProgressBar
+                backgroundColor="#bada55"
+                percentage={percentage(
+                  boxData.donations_sum_amount,
+                  boxData.target
+                )}
+              />
               <div className="relative my-5">
                 <div className="text-white font-kufam text-center font-bold pl-4 pt-6">
                   إجمالي التبرعات{" "}
-                  {numberWithCommas(Math.round(boxData.donations_sum_amount))}
+                  {numberWithCommas(boxData.donations_sum_amount)}
                 </div>
               </div>
               <div className="flex justify-between font-kufam  p-6 border bg-black/20 border-gray-700 rounded-lg">
@@ -114,18 +148,16 @@ const BoxPage = () => {
                   <p className="text-3xl font-bold text-white">
                     {boxData.donations_sum_amount
                       ? numberWithCommas(
-                          Math.round(
-                            boxData.target - boxData.donations_sum_amount
-                          )
+                          boxData.target - boxData.donations_sum_amount
                         )
-                      : numberWithCommas(Math.round(boxData.target))}{" "}
+                      : numberWithCommas(boxData.target)}{" "}
                     <span className="text-sm text-white">ر.س</span>
                   </p>
                 </div>
                 <div className="flex flex-col gap-4 text-white items-start px-2">
                   <p className="text-white">المبغ المستهدف</p>
                   <p className="text-3xl font-bold text-left">
-                    {numberWithCommas(Math.round(boxData.target))}
+                    {numberWithCommas(boxData.target)}
                     <span className="text-sm mr-2">ر.س</span>
                   </p>
                 </div>
