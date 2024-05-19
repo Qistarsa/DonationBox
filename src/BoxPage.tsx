@@ -10,31 +10,30 @@ const api = axios.create({
   baseURL: `${domainURL}/api/`,
 });
 
-type BoxData = {
-  id: number;
-  name_ar: string;
-  name_en: string;
+interface BoxData {
   description_ar: string | null;
-  description_en: string | null;
-  serial_no: string;
-  association_id: number;
-  status_id: number;
   target: number;
   image: string;
   hero_title: string;
   sub_title: string;
   qr_code: string;
-  created_at: string;
-  updated_at: string;
   media_type: string;
-  share_text: string;
-  quran: string;
   donations_sum_amount: number;
-};
+}
 
 const BoxPage = () => {
   const { id } = useURLID();
-  const [boxData, setBoxData] = useState<BoxData>({});
+  const [boxData, setBoxData] = useState<BoxData>({
+    target: 0,
+    description_ar: "",
+    image: "",
+    hero_title: "",
+    sub_title: "",
+    qr_code: "",
+    media_type: "",
+    donations_sum_amount: 0,
+  });
+
   const [isLoading, SetLoading] = useState(false);
   const [isImage, setImage] = useState(false);
   const [associationLogo, setassociationLogo] = useState(null);
