@@ -71,7 +71,7 @@ const BoxPage = () => {
   }
 
   function percentage(partial: number, total: number) {
-    return `${(100 * Math.round(partial)) / Math.round(total)}%`;
+    return `${Math.round((100 * Math.round(partial)) / Math.round(total))}%`;
   }
   return (
     <>
