@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import ProgressBar from "./components/progressBar";
 import { useURLID } from "./useURLID";
 import axios from "axios";
+import Pusher from "pusher-js";
+// require("dotenv").config();
 
 const domainURL = "https://hassala.qistar.rent";
 const mediaURl = `${domainURL}/storage/`;
@@ -21,6 +23,12 @@ interface BoxData {
   donations_sum_amount: number;
 }
 
+interface donation {
+  donation: {
+    amount: number;
+  };
+}
+
 const BoxPage = () => {
   const { id } = useURLID();
   const [boxData, setBoxData] = useState<BoxData>({
@@ -37,6 +45,7 @@ const BoxPage = () => {
   const [isLoading, SetLoading] = useState(false);
   const [isImage, setImage] = useState(false);
   const [associationLogo, setassociationLogo] = useState(null);
+  const [currentDonationAmount, setcurrentDonationAmount] = useState(0);
 
   useEffect(() => {
     const fetchDonationBoxData = async () => {
@@ -46,6 +55,7 @@ const BoxPage = () => {
         // console.log(response.data.data);
         setBoxData(response.data.data);
         setassociationLogo(response.data.data.association.logo);
+        setcurrentDonationAmount(response.data.data.donations_sum_amount);
         setImage(false);
       } catch (err: any) {
         if (err.response) {
@@ -61,6 +71,27 @@ const BoxPage = () => {
     };
     fetchDonationBoxData();
   }, [id]);
+
+  useEffect(() => {
+    const pusher = new Pusher("0c40cec85a5a4e079f9a", {
+      cluster: "ap2",
+    });
+
+    const channel = pusher.subscribe(`donation${id}`);
+    channel.bind("update.donation", (data: donation) => {
+      console.log("Received notification: ", data);
+      alert(data);
+      setcurrentDonationAmount(
+        Number(currentDonationAmount) + Number(data.donation.amount)
+      );
+      console.log("📖", currentDonationAmount);
+    });
+
+    return () => {
+      pusher.unsubscribe("donation");
+      pusher.disconnect();
+    };
+  }, []);
 
   // const donationCalcualions = () => {
   //   if()
@@ -137,8 +168,7 @@ const BoxPage = () => {
               />
               <div className="relative my-5">
                 <div className="text-white font-kufam text-center font-bold pl-4 pt-6">
-                  إجمالي التبرعات{" "}
-                  {numberWithCommas(boxData.donations_sum_amount)}
+                  إجمالي التبرعات {numberWithCommas(currentDonationAmount)}
                 </div>
               </div>
               <div className="flex justify-between font-kufam  p-6 border bg-black/20 border-gray-700 rounded-lg">
