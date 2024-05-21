@@ -4,7 +4,8 @@ import ProgressBar from "./components/progressBar";
 import { useURLID } from "./useURLID";
 import axios from "axios";
 import Pusher from "pusher-js";
-// require("dotenv").config();
+// import * as dotenv from "dotenv";
+// dotenv.config();
 
 const domainURL = "https://hassala.qistar.rent";
 const mediaURl = `${domainURL}/storage/`;
@@ -46,6 +47,7 @@ const BoxPage = () => {
   const [isImage, setImage] = useState(false);
   const [associationLogo, setassociationLogo] = useState(null);
   const [currentDonationAmount, setcurrentDonationAmount] = useState(0);
+  const [remainingDonationAmount, setremainingDonationAmount] = useState(0);
 
   useEffect(() => {
     const fetchDonationBoxData = async () => {
@@ -73,22 +75,24 @@ const BoxPage = () => {
   }, [id]);
 
   useEffect(() => {
-    const pusher = new Pusher("0c40cec85a5a4e079f9a", {
+    const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
       cluster: "ap2",
     });
 
-    const channel = pusher.subscribe(`donation${id}`);
+    const channel = pusher.subscribe(`donation.${id}`);
     channel.bind("update.donation", (data: donation) => {
       console.log("Received notification: ", data);
-      alert(data);
       setcurrentDonationAmount(
-        Number(currentDonationAmount) + Number(data.donation.amount)
+        Number(boxData.donations_sum_amount) + Number(data.donation.amount)
       );
+      console.log(currentDonationAmount);
+
       console.log("📖", currentDonationAmount);
+      calulateRemaingDonation();
     });
 
     return () => {
-      pusher.unsubscribe("donation");
+      pusher.unsubscribe(`donation.${id}`);
       pusher.disconnect();
     };
   }, []);
@@ -103,6 +107,9 @@ const BoxPage = () => {
 
   function percentage(partial: number, total: number) {
     return `${Math.round((100 * Math.round(partial)) / Math.round(total))}%`;
+  }
+  function calulateRemaingDonation() {
+    setremainingDonationAmount(boxData.target - currentDonationAmount);
   }
   return (
     <>
@@ -152,19 +159,9 @@ const BoxPage = () => {
                   {boxData.hero_title}
                 </h1>
               </div>
-              {/* <progress
-              dir="rtl"
-              max="100"
-              min="0"
-              value="65"
-              className="animate-pulse"
-            ></progress>  */}
               <ProgressBar
                 backgroundColor="#bada55"
-                percentage={percentage(
-                  boxData.donations_sum_amount,
-                  boxData.target
-                )}
+                percentage={percentage(currentDonationAmount, boxData.target)}
               />
               <div className="relative my-5">
                 <div className="text-white font-kufam text-center font-bold pl-4 pt-6">
@@ -176,9 +173,7 @@ const BoxPage = () => {
                   <p className="text-white">المبغ المتبقي</p>
                   <p className="text-3xl font-bold text-white">
                     {boxData.donations_sum_amount
-                      ? numberWithCommas(
-                          boxData.target - boxData.donations_sum_amount
-                        )
+                      ? numberWithCommas(boxData.target - currentDonationAmount)
                       : numberWithCommas(boxData.target)}{" "}
                     <span className="text-sm text-white">ر.س</span>
                   </p>
