@@ -4,6 +4,8 @@ import ProgressBar from "./components/progressBar";
 import { useURLID } from "./useURLID";
 import axios from "axios";
 import Pusher from "pusher-js";
+import useSound from "use-sound";
+// import thankYou from "./assets/sounds/thankyou.mp3";
 // import * as dotenv from "dotenv";
 // dotenv.config();
 
@@ -22,6 +24,7 @@ interface BoxData {
   qr_code: string;
   media_type: string;
   donations_sum_amount: number;
+  quran: string;
 }
 
 interface donation {
@@ -31,6 +34,7 @@ interface donation {
 }
 
 const BoxPage = () => {
+  // const [sayThankYou] = useSound(thankYou);
   const { id } = useURLID();
   const [boxData, setBoxData] = useState<BoxData>({
     target: 0,
@@ -41,6 +45,7 @@ const BoxPage = () => {
     qr_code: "",
     media_type: "",
     donations_sum_amount: 0,
+    quran: "لَنْ تَنَالُوا الْبِرَّ حَتَّى تُنْفِقُوا مِمَّا تُحِبُّونَ",
   });
 
   const [isLoading, SetLoading] = useState(false);
@@ -49,6 +54,7 @@ const BoxPage = () => {
   const [currentDonationAmount, setcurrentDonationAmount] = useState(0);
   const [newDonation, setnewDonation] = useState(0);
   const [remainingDonationAmount, setremainingDonationAmount] = useState(0);
+  const [thankYouMessage, setsayThankYou] = useState(false);
 
   useEffect(() => {
     const fetchDonationBoxData = async () => {
@@ -76,6 +82,10 @@ const BoxPage = () => {
     };
     fetchDonationBoxData();
   }, [id, currentDonationAmount, newDonation]);
+
+  useEffect(() => {
+    // sayThankYou();
+  }, [newDonation]);
 
   useEffect(() => {
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
@@ -113,9 +123,6 @@ const BoxPage = () => {
   function percentage(partial: number, total: number) {
     return `${Math.round((100 * Math.round(partial)) / Math.round(total))}%`;
   }
-  function calulateRemaingDonation() {
-    setremainingDonationAmount(boxData.target - currentDonationAmount);
-  }
   return (
     <>
       {isLoading ? (
@@ -129,7 +136,7 @@ const BoxPage = () => {
         </div>
       ) : (
         <div className="max-sm:h-auto w-screen h-screen overflow-hidden">
-          {isImage ? (
+          {boxData.media_type === "Image" ? (
             <div className="absolute  top-0 left-0 -z-20 h-screen w-full">
               <img
                 src={`https://hassala.qistar.rent/storage/${boxData.image}`}
@@ -140,7 +147,7 @@ const BoxPage = () => {
             </div>
           ) : (
             <video
-              src="https://cdn.pixabay.com/video/2020/03/13/33631-398856295_large.mp4"
+              src={`https://hassala.qistar.rent/storage/${boxData.image}`}
               autoPlay
               loop
               muted
@@ -150,30 +157,32 @@ const BoxPage = () => {
 
           <div className="-z-10 absolute top-0 left-0 h-screen w-screen bg-gradient-to-t from-black/80 to-black/50"></div>
           <div className="w-full h-full grid grid-cols-2 max-sm:grid-cols-1 z-50 mx-auto justify-center items-center">
-            <div className="px-20 flex flex-col gap-4">
+            <div className="px-20 flex flex-col gap-8">
               <div>
-                <p className="text-white font-kufam text-md mb-8 px-4 py-3 w-fit rounded-full border border-gray-800 bg-gray-50/10 flex gap-4 animate-marquee2">
-                  <span className="text-sm mt-1">&#x6DD;</span>
-                  <span className="mt-1">
-                    لَنْ تَنَالُوا الْبِرَّ حَتَّى تُنْفِقُوا مِمَّا تُحِبُّونَ{" "}
-                  </span>
+                <p className="text-white font-kufam text-md mb-8 px-6 py-3 w-fit rounded-md border border-gray-400 bg-gray-50/30 backdrop-blur-lg flex gap-4 animate-marquee2">
+                  {/* <span className="text-sm mt-1">&#x6DD;</span> */}
+                  <span className="mt-1">{boxData.quran}</span>
 
-                  <span className="mt-1">&#x6DD;</span>
+                  {/* <span className="mt-1">&#x6DD;</span> */}
                 </p>
-                <h1 className="text-6xl font-kufam font-black text-white text-right leading-tight">
+
+                <h1 className="text-6xl font-kufam font-black text-white text-right leading-tight mb-6">
                   {boxData.hero_title}
                 </h1>
+                <ProgressBar
+                  backgroundColor="#bada55"
+                  percentage={percentage(currentDonationAmount, boxData.target)}
+                />
               </div>
-              <ProgressBar
-                backgroundColor="#bada55"
-                percentage={percentage(currentDonationAmount, boxData.target)}
-              />
-              <div className="relative my-5">
-                <div className="text-white font-kufam text-center font-bold pl-4 pt-6">
-                  إجمالي التبرعات {numberWithCommas(currentDonationAmount)}
+
+              <div className="flex justify-between font-kufam  p-6 border bg-black/20 border-gray-600 rounded-lg backdrop-blur-lg">
+                <div className="flex flex-col gap-4">
+                  <p className="text-white"> تم جمع</p>
+                  <div className="text-3xl font-bold text-white ">
+                    {numberWithCommas(currentDonationAmount)}
+                    <span className="text-sm text-white mr-2">ر.س</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between font-kufam  p-6 border bg-black/20 border-gray-700 rounded-lg">
                 <div className="flex flex-col gap-4">
                   <p className="text-white">المبغ المتبقي</p>
                   <p className="text-3xl font-bold text-white">
@@ -181,7 +190,7 @@ const BoxPage = () => {
                       ? numberWithCommas(boxData.target - currentDonationAmount)
                       : numberWithCommas(boxData.target)}{" "} */}
                     {remainingDonationAmount}
-                    <span className="text-sm text-white">ر.س</span>
+                    <span className="text-sm text-white mr-2">ر.س</span>
                   </p>
                 </div>
                 <div className="flex flex-col gap-4 text-white items-start px-2">
