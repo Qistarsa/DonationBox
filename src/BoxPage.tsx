@@ -5,7 +5,7 @@ import { useURLID } from "./useURLID";
 import axios from "axios";
 import Pusher from "pusher-js";
 import useSound from "use-sound";
-// import thankYou from "./assets/sounds/thankyou.mp3";
+import thankYou from "./assets/sounds/thankyou.mp3";
 // import * as dotenv from "dotenv";
 // dotenv.config();
 
@@ -34,7 +34,7 @@ interface donation {
 }
 
 const BoxPage = () => {
-  // const [sayThankYou] = useSound(thankYou);
+  const [sayThankYou] = useSound(thankYou);
   const { id } = useURLID();
   const [boxData, setBoxData] = useState<BoxData>({
     target: 0,
@@ -49,25 +49,21 @@ const BoxPage = () => {
   });
 
   const [isLoading, SetLoading] = useState(false);
-  const [isImage, setImage] = useState(false);
   const [associationLogo, setassociationLogo] = useState(null);
   const [currentDonationAmount, setcurrentDonationAmount] = useState(0);
   const [newDonation, setnewDonation] = useState(0);
   const [remainingDonationAmount, setremainingDonationAmount] = useState(0);
-  const [thankYouMessage, setsayThankYou] = useState(false);
 
   useEffect(() => {
     const fetchDonationBoxData = async () => {
       // SetLoading(true);
       try {
         const response = await api.get(`hassala/${id}`);
-        // console.log(response.data.data);
         setBoxData(response.data.data);
         setassociationLogo(response.data.data.association.logo);
 
         setcurrentDonationAmount(response.data.data.donations_sum_amount);
         console.log("api call currentDonation ", currentDonationAmount);
-        setImage(false);
       } catch (err: any) {
         if (err.response) {
           console.log(err.response.data);
@@ -77,14 +73,14 @@ const BoxPage = () => {
           console.log(err.message);
         }
       } finally {
-        SetLoading(false);
+        // SetLoading(false);
       }
     };
     fetchDonationBoxData();
   }, [id, currentDonationAmount, newDonation]);
 
   useEffect(() => {
-    // sayThankYou();
+    sayThankYou();
   }, [newDonation]);
 
   useEffect(() => {
@@ -95,7 +91,6 @@ const BoxPage = () => {
     channel.bind("update.donation", (data: donation) => {
       console.log("Received notification: ", data);
       setnewDonation(data.donation.amount);
-
       console.log(
         "🎯 from pusher useeffect pusher amount: ",
         data.donation.amount
@@ -111,7 +106,10 @@ const BoxPage = () => {
   }, []);
 
   useEffect(() => {
-    const toGo = Number(boxData.target) - Number(currentDonationAmount);
+    const toGo = Math.max(
+      0,
+      Number(boxData.target) - Number(currentDonationAmount)
+    );
     setremainingDonationAmount(toGo);
   }, [currentDonationAmount]);
 
