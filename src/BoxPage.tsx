@@ -56,7 +56,7 @@ const BoxPage = () => {
 
   useEffect(() => {
     const fetchDonationBoxData = async () => {
-      // SetLoading(true);
+      SetLoading(false);
       try {
         const response = await api.get(`hassala/${id}`);
         setBoxData(response.data.data);
@@ -64,14 +64,14 @@ const BoxPage = () => {
 
         setcurrentDonationAmount(response.data.data.donations_sum_amount);
         console.log("api call currentDonation ", currentDonationAmount);
-      } catch (err: any) {
-        if (err.response) {
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
-        } else {
-          console.log(err.message);
-        }
+      } catch (err) {
+        console.log(err);
+        // if (err.response) {
+        //   console.log(err.response.status);
+        //   console.log(err.response.headers);
+        // } else {
+        //   console.log(err);
+        // }
       } finally {
         // SetLoading(false);
       }
@@ -114,7 +114,7 @@ const BoxPage = () => {
   }, [currentDonationAmount]);
 
   function numberWithCommas(x: number) {
-    let num = Math.round(x);
+    const num = Math.round(x);
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
