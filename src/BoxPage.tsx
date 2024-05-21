@@ -47,17 +47,20 @@ const BoxPage = () => {
   const [isImage, setImage] = useState(false);
   const [associationLogo, setassociationLogo] = useState(null);
   const [currentDonationAmount, setcurrentDonationAmount] = useState(0);
+  const [newDonation, setnewDonation] = useState(0);
   const [remainingDonationAmount, setremainingDonationAmount] = useState(0);
 
   useEffect(() => {
     const fetchDonationBoxData = async () => {
-      SetLoading(true);
+      // SetLoading(true);
       try {
         const response = await api.get(`hassala/${id}`);
         // console.log(response.data.data);
         setBoxData(response.data.data);
         setassociationLogo(response.data.data.association.logo);
+
         setcurrentDonationAmount(response.data.data.donations_sum_amount);
+        console.log("api call currentDonation ", currentDonationAmount);
         setImage(false);
       } catch (err: any) {
         if (err.response) {
@@ -72,23 +75,23 @@ const BoxPage = () => {
       }
     };
     fetchDonationBoxData();
-  }, [id]);
+  }, [id, currentDonationAmount, newDonation]);
 
   useEffect(() => {
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
       cluster: "ap2",
     });
-
     const channel = pusher.subscribe(`donation.${id}`);
     channel.bind("update.donation", (data: donation) => {
       console.log("Received notification: ", data);
-      setcurrentDonationAmount(
-        Number(boxData.donations_sum_amount) + Number(data.donation.amount)
-      );
-      console.log(currentDonationAmount);
+      setnewDonation(data.donation.amount);
 
-      console.log("📖", currentDonationAmount);
-      calulateRemaingDonation();
+      console.log(
+        "🎯 from pusher useeffect pusher amount: ",
+        data.donation.amount
+      );
+
+      console.log("📖 pusher: ", currentDonationAmount + newDonation);
     });
 
     return () => {
@@ -97,9 +100,11 @@ const BoxPage = () => {
     };
   }, []);
 
-  // const donationCalcualions = () => {
-  //   if()
-  // }
+  useEffect(() => {
+    const toGo = Number(boxData.target) - Number(currentDonationAmount);
+    setremainingDonationAmount(toGo);
+  }, [currentDonationAmount]);
+
   function numberWithCommas(x: number) {
     let num = Math.round(x);
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -172,9 +177,10 @@ const BoxPage = () => {
                 <div className="flex flex-col gap-4">
                   <p className="text-white">المبغ المتبقي</p>
                   <p className="text-3xl font-bold text-white">
-                    {boxData.donations_sum_amount
+                    {/* {boxData.donations_sum_amount
                       ? numberWithCommas(boxData.target - currentDonationAmount)
-                      : numberWithCommas(boxData.target)}{" "}
+                      : numberWithCommas(boxData.target)}{" "} */}
+                    {remainingDonationAmount}
                     <span className="text-sm text-white">ر.س</span>
                   </p>
                 </div>
