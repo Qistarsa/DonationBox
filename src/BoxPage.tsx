@@ -246,4 +246,4 @@ const BoxPage = () => {
   );
 };
 
-export default BoxPage;
+module.exports = BoxPage;
