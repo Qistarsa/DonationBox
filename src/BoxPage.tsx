@@ -4,6 +4,9 @@ import ProgressBar from "./components/progressBar";
 import { useURLID } from "./useURLID";
 import axios from "axios";
 import Pusher from "pusher-js";
+
+//extras
+import ConfettiExplosion from "react-confetti-explosion";
 import useSound from "use-sound";
 import thankYou from "./assets/sounds/thankyou.mp3";
 // import * as dotenv from "dotenv";
@@ -35,6 +38,7 @@ interface donation {
 
 const BoxPage = () => {
   const [sayThankYou] = useSound(thankYou);
+  const [isExploding, setIsExploding] = useState(false);
   const { id } = useURLID();
   const [boxData, setBoxData] = useState<BoxData>({
     target: 0,
@@ -112,6 +116,12 @@ const BoxPage = () => {
     );
     setremainingDonationAmount(toGo);
   }, [currentDonationAmount]);
+
+  useEffect(() => {
+    if (remainingDonationAmount === 0) {
+      setIsExploding(true);
+    }
+  }, [remainingDonationAmount]);
 
   function numberWithCommas(x: number) {
     const num = Math.round(x);
@@ -210,6 +220,7 @@ const BoxPage = () => {
               <div className="bg-white my-auto w-2/3 h-auto rounded-3xl flex flex-col gap-6 justify-center items-center ">
                 <div className="w-full flex justify-center items-center rounded-t-3xl p-4 bg-zinc-100">
                   <div className="w-auto  min-w-8/12 ">
+                    {isExploding && <ConfettiExplosion />}
                     <img
                       src={`${mediaURl}${associationLogo}`}
                       alt="association logo"
