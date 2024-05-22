@@ -46,4 +46,4 @@ const ProgressBar = ({
   );
 };
 
-export default ProgressBar;
+module.exports = ProgressBar;
