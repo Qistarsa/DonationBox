@@ -165,7 +165,7 @@ const BoxPage = () => {
                   {/* <span className="mt-1">&#x6DD;</span> */}
                 </p>
 
-                <h1 className="text-2xl md:text-4xl lg:text-6xl font-kufam font-black text-white text-right leading-tight mb-6">
+                <h1 className="text-lg md:text-4xl lg:text-6xl font-kufam font-black text-white text-right leading-tight mb-6">
                   {boxData.hero_title}
                 </h1>
                 <ProgressBar
