@@ -134,7 +134,7 @@ const BoxPage = () => {
           </div>
         </div>
       ) : (
-        <div className="max-sm:h-auto w-screen h-screen overflow-hidden">
+        <div className="h-auto md:w-screen md:h-screen overflow-hidden">
           {boxData.media_type === "Image" ? (
             <div className="absolute  top-0 left-0 -z-20 h-screen w-full">
               <img
@@ -165,11 +165,11 @@ const BoxPage = () => {
                   {/* <span className="mt-1">&#x6DD;</span> */}
                 </p>
 
-                <h1 className="text-6xl font-kufam font-black text-white text-right leading-tight mb-6">
+                <h1 className="text-2xl md:text-4xl lg:text-6xl font-kufam font-black text-white text-right leading-tight mb-6">
                   {boxData.hero_title}
                 </h1>
                 <ProgressBar
-                  backgroundColor="#bada55"
+                  bgColor="#bada55"
                   percentage={percentage(currentDonationAmount, boxData.target)}
                 />
               </div>
