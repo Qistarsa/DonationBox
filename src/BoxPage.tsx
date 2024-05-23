@@ -11,10 +11,9 @@ import thankYou from "./assets/sounds/thankyou.mp3";
 // import * as dotenv from "dotenv";
 // dotenv.config();
 
-const domainURL = "https://hassala.qistar.rent";
-const mediaURl = `${domainURL}/storage/`;
+const mediaURl = `${import.meta.env.VITE_BASEURL_STORAGE}`;
 const api = axios.create({
-  baseURL: `${domainURL}/api/`,
+  baseURL: `${import.meta.env.VITE_BASEURL_API}`,
 });
 
 interface BoxData {
@@ -139,7 +138,7 @@ const BoxPage = () => {
           {boxData.media_type === "Image" ? (
             <div className="absolute  top-0 left-0 -z-20 h-screen w-full">
               <img
-                src={`https://hassala.qistar.rent/storage/${boxData.image}`}
+                src={`${mediaURl}${boxData.image}`}
                 alt="stockimage"
                 className=" w-full h-full object-cover "
                 loading="lazy"
@@ -147,7 +146,7 @@ const BoxPage = () => {
             </div>
           ) : (
             <video
-              src={`https://hassala.qistar.rent/storage/${boxData.image}`}
+              src={`${mediaURl}${boxData.image}`}
               autoPlay
               loop
               muted
