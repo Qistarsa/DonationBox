@@ -103,7 +103,10 @@ const BoxPage = () => {
   }, []);
 
   useEffect(() => {
-    sayThankYou();
+    if (newDonation > 0) {
+      sayThankYou();
+    }
+    console.log(newDonation);
   }, [newDonation]);
 
   useEffect(() => {
@@ -156,16 +159,16 @@ const BoxPage = () => {
 
           <div className="-z-10 absolute top-0 left-0 h-screen w-screen bg-gradient-to-t from-black/80 to-black/50"></div>
           <div className="w-full h-full grid grid-cols-2 max-sm:grid-cols-1 z-50 mx-auto justify-center items-center">
-            <div className="px-20 flex flex-col gap-8">
+            <div className="px-8 flex flex-col gap-8">
               <div>
-                <p className="text-white font-kufam text-md mb-8 px-6 py-3 w-fit rounded-md border border-gray-400 bg-gray-50/30 backdrop-blur-lg flex gap-4 animate-marquee2">
+                <p className="text-md text-white font-kufam text-md mb-8 px-6 py-3 w-fit rounded-md border border-gray-400 bg-gray-50/30 backdrop-blur-lg flex gap-4 animate-marquee2">
                   {/* <span className="text-sm mt-1">&#x6DD;</span> */}
                   <span className="mt-1">{boxData.quran}</span>
 
                   {/* <span className="mt-1">&#x6DD;</span> */}
                 </p>
 
-                <h1 className="text-lg md:text-4xl lg:text-6xl font-kufam font-black text-white text-right leading-tight mb-6">
+                <h1 className="text-5xl md:text-6xl max-lg:text-6xl font-kufam font-black text-white text-right leading-tight mb-6">
                   {boxData.hero_title}
                 </h1>
                 <ProgressBar
@@ -188,7 +191,7 @@ const BoxPage = () => {
                     {/* {boxData.donations_sum_amount
                       ? numberWithCommas(boxData.target - currentDonationAmount)
                       : numberWithCommas(boxData.target)}{" "} */}
-                    {remainingDonationAmount}
+                    {numberWithCommas(remainingDonationAmount)}
                     <span className="text-sm text-white mr-2">ر.س</span>
                   </p>
                 </div>
