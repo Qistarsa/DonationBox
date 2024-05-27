@@ -8,6 +8,8 @@ import Pusher from "pusher-js";
 //extras
 import useSound from "use-sound";
 import thankYou from "./assets/sounds/thankyou.mp3";
+import ConfettiExplosion from "react-confetti-explosion";
+
 // import * as dotenv from "dotenv";
 // dotenv.config();
 
@@ -105,6 +107,10 @@ const BoxPage = () => {
   useEffect(() => {
     if (newDonation > 0) {
       sayThankYou();
+
+      setInterval(() => {
+        setIsExploding(true);
+      }, 1300);
     }
     console.log(newDonation);
   }, [newDonation]);
@@ -137,7 +143,7 @@ const BoxPage = () => {
           </div>
         </div>
       ) : (
-        <div className="h-auto md:w-screen md:h-screen overflow-hidden">
+        <div className="h-full md:w-screen md:h-screen overflow-hidden">
           {boxData.media_type === "Image" ? (
             <div className="absolute  top-0 left-0 -z-20 h-screen w-full">
               <img
@@ -158,17 +164,14 @@ const BoxPage = () => {
           )}
 
           <div className="-z-10 absolute top-0 left-0 h-screen w-screen bg-gradient-to-t from-black/80 to-black/50"></div>
-          <div className="w-full h-full grid grid-cols-2 max-sm:grid-cols-1 z-50 mx-auto justify-center items-center">
-            <div className="px-8 flex flex-col gap-8">
-              <div>
-                <p className="text-md text-white font-kufam text-md mb-8 px-6 py-3 w-fit rounded-md border border-gray-400 bg-gray-50/30 backdrop-blur-lg flex gap-4 animate-marquee2">
-                  {/* <span className="text-sm mt-1">&#x6DD;</span> */}
+          <div className="w-full h-full grid md:grid-cols-2 max-sm:grid-cols-1 z-50 mx-auto justify-center items-center">
+            <div className="px-8 flex flex-col gap-8 pt-8 sm:pt-0">
+              <div className="">
+                <p className="text-md text-white font-kufam text-md mb-8 px-6 py-3 w-fit rounded-md border border-gray-400 bg-gray-50/30 backdrop-blur-lg flex gap-4 mx-auto md:mx-0">
                   <span className="mt-1">{boxData.quran}</span>
-
-                  {/* <span className="mt-1">&#x6DD;</span> */}
                 </p>
 
-                <h1 className="text-5xl md:text-6xl max-lg:text-6xl font-kufam font-black text-white text-right leading-tight mb-6">
+                <h1 className="text-2xl sm:text-5xl lg:text-6xl  xl:text-7xl font-kufam font-black text-white text-center md:text-right sm:leading-tight mb-6">
                   {boxData.hero_title}
                 </h1>
                 <ProgressBar
@@ -177,17 +180,17 @@ const BoxPage = () => {
                 />
               </div>
 
-              <div className="flex justify-between font-kufam  p-6 border bg-black/20 border-gray-600 rounded-lg backdrop-blur-lg">
-                <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap-reverse justify-between font-kufam  p-4 sm:p-6 border bg-black/20 border-gray-600 rounded-lg backdrop-blur-lg">
+                <div className="flex flex-col gap-1 sm:gap-4">
                   <p className="text-white"> تم جمع</p>
-                  <div className="text-3xl font-bold text-white ">
+                  <div className="text-lg sm:text-3xl font-bold text-white ">
                     {numberWithCommas(currentDonationAmount)}
                     <span className="text-sm text-white mr-2">ر.س</span>
                   </div>
                 </div>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1 sm:gap-4">
                   <p className="text-white">المبلغ المتبقي</p>
-                  <p className="text-3xl font-bold text-white">
+                  <p className="text-lg sm:text-3xl font-bold text-white">
                     {/* {boxData.donations_sum_amount
                       ? numberWithCommas(boxData.target - currentDonationAmount)
                       : numberWithCommas(boxData.target)}{" "} */}
@@ -195,9 +198,9 @@ const BoxPage = () => {
                     <span className="text-sm text-white mr-2">ر.س</span>
                   </p>
                 </div>
-                <div className="flex flex-col gap-4 text-white items-start px-2">
+                <div className="flex flex-col gap-1 sm:gap-4 text-white items-start px-0 sm:px-2 mb-0 mb-4 sm:mb-0">
                   <p className="text-white">المبغ المستهدف</p>
-                  <p className="text-3xl font-bold text-left">
+                  <p className="text-lg sm:text-3xl font-bold text-left">
                     {numberWithCommas(boxData.target)}
                     <span className="text-sm mr-2">ر.س</span>
                   </p>
@@ -205,7 +208,7 @@ const BoxPage = () => {
               </div>
             </div>
             <div className=" w-full flex flex-col gap-6 h-f justify-center items-center">
-              <div className="text-center text-white ">
+              <div className="text-center text-white">
                 <p className="text-2xl text-center mt-4 font-bold font-kufam">
                   للتبرع
                 </p>

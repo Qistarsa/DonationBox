@@ -1,7 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import "./progressBar.css";
-import ConfettiExplosion from "react-confetti-explosion";
 
 const ProgressBar = ({
   backgroundColor,
@@ -16,9 +15,6 @@ const ProgressBar = ({
     requestAnimationFrame(() => {
       setWidth(`${percentage}%`);
       if (Number(percentage) >= 100) {
-        setInterval(() => {
-          setIsExploding(true);
-        }, 1300);
       }
     });
   }, [percentage]);
