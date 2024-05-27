@@ -9,7 +9,6 @@ const ProgressBar = ({
   bgColor = "#bada55",
 }) => {
   const [width, setWidth] = useState(0);
-  const [isExploding, setIsExploding] = useState(false);
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -31,11 +30,7 @@ const ProgressBar = ({
           }}
         >
           <span></span>
-          <p className="p-1 ml-2 text-white font-bold">
-            {isExploding && <ConfettiExplosion />}
-            {percentage}%
-          </p>
-          {isExploding && <ConfettiExplosion />}
+          <p className="p-1 ml-2 text-white font-bold">{percentage}%</p>
         </div>
       </div>
     </>

@@ -56,6 +56,7 @@ const BoxPage = () => {
   const [currentDonationAmount, setcurrentDonationAmount] = useState(0);
   const [newDonation, setnewDonation] = useState(0);
   const [remainingDonationAmount, setremainingDonationAmount] = useState(0);
+  const [isExploding, setIsExploding] = useState(false);
 
   useEffect(() => {
     const fetchDonationBoxData = async () => {
@@ -108,9 +109,9 @@ const BoxPage = () => {
     if (newDonation > 0) {
       sayThankYou();
 
-      setInterval(() => {
-        setIsExploding(true);
-      }, 1300);
+      // setInterval(() =>
+      setIsExploding(true);
+      // }, 1300);
     }
     console.log(newDonation);
   }, [newDonation]);
@@ -174,6 +175,7 @@ const BoxPage = () => {
                 <h1 className="text-2xl sm:text-5xl lg:text-6xl  xl:text-7xl font-kufam font-black text-white text-center md:text-right sm:leading-tight mb-6">
                   {boxData.hero_title}
                 </h1>
+
                 <ProgressBar
                   bgColor="#bada55"
                   percentage={percentage(currentDonationAmount, boxData.target)}
@@ -213,6 +215,7 @@ const BoxPage = () => {
                   للتبرع
                 </p>
                 <p>فقط إمسح ال QR Code</p>
+                {isExploding && <ConfettiExplosion />}
               </div>
               <div className="bg-white my-auto w-2/3 h-auto rounded-3xl flex flex-col gap-6 justify-center items-center ">
                 <div className="w-full flex justify-center items-center rounded-t-3xl p-4 bg-zinc-100">
