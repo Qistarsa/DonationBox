@@ -172,7 +172,7 @@ const BoxPage = () => {
                   <span className="mt-1">{boxData.quran}</span>
                 </p>
 
-                <h1 className="text-2xl sm:text-5xl lg:text-6xl  xl:text-7xl font-kufam font-black text-white text-center md:text-right sm:leading-tight mb-6">
+                <h1 className="text-2xl sm:text-5xl lg:text-6xl  xl:text-7xl font-kufam font-black text-white text-center md:text-right sm:leading-tight xl:leading-tight mb-6">
                   {boxData.hero_title}
                 </h1>
 
