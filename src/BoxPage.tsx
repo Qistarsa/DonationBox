@@ -164,7 +164,7 @@ const BoxPage = () => {
             ></video>
           )}
 
-          <div className="-z-10 absolute top-0 left-0 h-screen w-screen bg-gradient-to-t from-black/80 to-black/50"></div>
+          <div className="-z-10 absolute top-0 left-0 h-screen w-screen bg-gradient-to-t from-black/80 to-gray/50"></div>
           <div className="w-full h-full grid md:grid-cols-2 max-sm:grid-cols-1 z-50 mx-auto justify-center items-center">
             <div className="px-8 flex flex-col gap-8 pt-8 sm:pt-0">
               <div className="">
