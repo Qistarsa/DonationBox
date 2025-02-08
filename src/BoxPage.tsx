@@ -65,7 +65,7 @@ const BoxPage = () => {
         const response = await api.get(`hassala/${id}`);
         setBoxData(response.data.data);
         setassociationLogo(response.data.data.association.logo);
-        setImage(false);
+        setcurrentDonationAmount(response.data.data.donations_sum_amount);
       } catch (err) {
         const error = err as {
           response?: { data: unknown; status: number; headers: unknown };
