@@ -9,7 +9,7 @@ interface ProgressBarProps {
 
 const ProgressBar: FC<ProgressBarProps> = ({
   // backgroundColor,
-  percentage = "0%",
+  percentage = "0",
   bgColor = "#bada55",
 }) => {
   const [width, setWidth] = useState<string>("0%");
@@ -30,7 +30,7 @@ const ProgressBar: FC<ProgressBarProps> = ({
         }}
       >
         <span></span>
-        <p className="p-1 ml-2 text-white font-bold">{percentage}</p>
+        <p className="p-1 ml-2 text-white font-bold">{`% ${percentage} `}</p>
       </div>
     </div>
   );
