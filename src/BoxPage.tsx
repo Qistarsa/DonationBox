@@ -34,27 +34,30 @@ type BoxData = {
 
 const BoxPage = () => {
   const { id } = useURLID();
-  const [boxData, setBoxData] = useState<BoxData>({});
+  const [boxData, setBoxData] = useState<BoxData | undefined>();
   const [isLoading, SetLoading] = useState(false);
   const [isImage, setImage] = useState(false);
-  const [associationLogo, setassociationLogo] = useState(null);
+  const [associationLogo, setassociationLogo] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDonationBoxData = async () => {
       SetLoading(true);
       try {
         const response = await api.get(`hassala/${id}`);
-        // console.log(response.data.data);
         setBoxData(response.data.data);
         setassociationLogo(response.data.data.association.logo);
         setImage(false);
-      } catch (err: any) {
-        if (err.response) {
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
+      } catch (err) {
+        const error = err as {
+          response?: { data: unknown; status: number; headers: unknown };
+          message: string;
+        };
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
         } else {
-          console.log(err.message);
+          console.log(error.message);
         }
       } finally {
         SetLoading(false);
@@ -63,17 +66,15 @@ const BoxPage = () => {
     fetchDonationBoxData();
   }, [id]);
 
-  // const donationCalcualions = () => {
-  //   if()
-  // }
   function numberWithCommas(x: number) {
-    let num = Math.round(x);
+    const num = Math.round(x);
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   function percentage(partial: number, total: number) {
     return `${(100 * Math.round(partial)) / Math.round(total)}%`;
   }
+
   return (
     <>
       {isLoading ? (
@@ -90,7 +91,7 @@ const BoxPage = () => {
           {isImage ? (
             <div className="absolute  top-0 left-0 -z-20 h-screen w-full">
               <img
-                src={`https://hassala.qistar.rent/storage/${boxData.image}`}
+                src={`https://hassala.qistar.rent/storage/${boxData?.image}`}
                 alt="stockimage"
                 className=" w-full h-full object-cover "
                 loading="lazy"
@@ -119,45 +120,38 @@ const BoxPage = () => {
                   <span className="mt-1">&#x6DD;</span>
                 </p>
                 <h1 className="text-6xl font-kufam font-black text-white text-right leading-tight">
-                  {boxData.hero_title}
+                  {boxData?.hero_title}
                 </h1>
               </div>
-              {/* <progress
-              dir="rtl"
-              max="100"
-              min="0"
-              value="65"
-              className="animate-pulse"
-            ></progress>  */}
               <ProgressBar
                 backgroundColor="#bada55"
                 percentage={percentage(
-                  boxData.donations_sum_amount,
-                  boxData.target
+                  boxData?.donations_sum_amount ?? 0,
+                  boxData?.target ?? 1
                 )}
               />
               <div className="relative my-5">
                 <div className="text-white font-kufam text-center font-bold pl-4 pt-6">
                   إجمالي التبرعات{" "}
-                  {numberWithCommas(boxData.donations_sum_amount)}
+                  {numberWithCommas(boxData?.donations_sum_amount ?? 0)}
                 </div>
               </div>
               <div className="flex justify-between font-kufam  p-6 border bg-black/20 border-gray-700 rounded-lg">
                 <div className="flex flex-col gap-4">
                   <p className="text-white">المبغ المتبقي</p>
                   <p className="text-3xl font-bold text-white">
-                    {boxData.donations_sum_amount
+                    {boxData?.donations_sum_amount
                       ? numberWithCommas(
                           boxData.target - boxData.donations_sum_amount
                         )
-                      : numberWithCommas(boxData.target)}{" "}
+                      : numberWithCommas(boxData?.target ?? 0)}{" "}
                     <span className="text-sm text-white">ر.س</span>
                   </p>
                 </div>
                 <div className="flex flex-col gap-4 text-white items-start px-2">
                   <p className="text-white">المبغ المستهدف</p>
                   <p className="text-3xl font-bold text-left">
-                    {numberWithCommas(boxData.target)}
+                    {numberWithCommas(boxData?.target ?? 0)}
                     <span className="text-sm mr-2">ر.س</span>
                   </p>
                 </div>
@@ -184,7 +178,7 @@ const BoxPage = () => {
                 <div className="h-full w-full">
                   <div className="w-8/12 mx-auto">
                     <img
-                      src={`${mediaURl}${boxData.qr_code}`}
+                      src={`${mediaURl}${boxData?.qr_code}`}
                       alt="design"
                       className="w-full h-full"
                     />
