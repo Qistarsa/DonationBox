@@ -65,17 +65,19 @@ const BoxPage = () => {
         const response = await api.get(`hassala/${id}`);
         setBoxData(response.data.data);
         setassociationLogo(response.data.data.association.logo);
-
-        setcurrentDonationAmount(response.data.data.donations_sum_amount);
-        console.log("api call currentDonation ", currentDonationAmount);
+        setImage(false);
       } catch (err) {
-        console.log(err);
-        // if (err.response) {
-        //   console.log(err.response.status);
-        //   console.log(err.response.headers);
-        // } else {
-        //   console.log(err);
-        // }
+        const error = err as {
+          response?: { data: unknown; status: number; headers: unknown };
+          message: string;
+        };
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else {
+          console.log(error.message);
+        }
       } finally {
         // SetLoading(false);
       }
@@ -132,6 +134,7 @@ const BoxPage = () => {
   function percentage(partial: number, total: number) {
     return `${Math.round((100 * Math.round(partial)) / Math.round(total))}`;
   }
+
   return (
     <>
       {isLoading ? (
@@ -231,7 +234,7 @@ const BoxPage = () => {
                 <div className="h-full w-full">
                   <div className="w-8/12 mx-auto">
                     <img
-                      src={`${mediaURl}${boxData.qr_code}`}
+                      src={`${mediaURl}${boxData?.qr_code}`}
                       alt="design"
                       className="w-full h-full"
                     />
