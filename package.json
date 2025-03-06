@@ -13,11 +13,13 @@
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
     "pusher-js": "^8.4.0-rc2",
+    "qrcode.react": "^4.2.0",
     "react": "^18.2.0",
     "react-confetti-explosion": "^2.1.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.1",
-    "use-sound": "^4.0.1"
+    "use-sound": "^4.0.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",

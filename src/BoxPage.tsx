@@ -4,11 +4,13 @@ import ProgressBar from "./components/progressBar";
 import { useURLID } from "./useURLID";
 import axios from "axios";
 import Pusher from "pusher-js";
+import { v4 as uuidv4 } from "uuid";
 
 //extras
 import useSound from "use-sound";
 import thankYou from "./assets/sounds/thankyou.mp3";
 import ConfettiExplosion from "react-confetti-explosion";
+import DonationQRCode from "./components/QrCodeGenerator";
 
 // import * as dotenv from "dotenv";
 // dotenv.config();
@@ -57,47 +59,58 @@ const BoxPage = () => {
   const [newDonation, setnewDonation] = useState(0);
   const [remainingDonationAmount, setremainingDonationAmount] = useState(0);
   const [isExploding, setIsExploding] = useState(false);
+  const [clientId, setClientId] = useState<string>("");
+
+  const fetchDonationBoxData = async () => {
+    SetLoading(false);
+    try {
+      const response = await api.get(`hassala/${id}`);
+      setBoxData(response.data.data);
+      setassociationLogo(response.data.data.association.logo);
+      setcurrentDonationAmount(response.data.data.donations_sum_amount);
+    } catch (err) {
+      const error = err as {
+        response?: { data: unknown; status: number; headers: unknown };
+        message: string;
+      };
+      if (error.response) {
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else {
+        console.log(error.message);
+      }
+    } finally {
+      // SetLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDonationBoxData = async () => {
-      SetLoading(false);
-      try {
-        const response = await api.get(`hassala/${id}`);
-        setBoxData(response.data.data);
-        setassociationLogo(response.data.data.association.logo);
-        setcurrentDonationAmount(response.data.data.donations_sum_amount);
-      } catch (err) {
-        const error = err as {
-          response?: { data: unknown; status: number; headers: unknown };
-          message: string;
-        };
-        if (error.response) {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else {
-          console.log(error.message);
-        }
-      } finally {
-        // SetLoading(false);
-      }
-    };
     fetchDonationBoxData();
   }, [id, currentDonationAmount, newDonation]);
+
+  useEffect(() => {
+    let storedId = localStorage.getItem("clientId") ?? uuidv4();
+    if (!localStorage.getItem("clientId")) {
+      localStorage.setItem("clientId", storedId);
+    }
+    setClientId(storedId);
+  }, []);
 
   useEffect(() => {
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
       cluster: "ap2",
     });
-    const channel = pusher.subscribe(`donation.${id}`);
+    // const clientId = localStorage.getItem("clientId");
+    const channel = pusher.subscribe(`donation.${clientId}`);
     channel.bind("update.donation", (data: donation) => {
       console.log("Received notification: ", data);
       setnewDonation(data.donation.amount);
-      console.log(
-        "🎯 from pusher useeffect pusher amount: ",
-        data.donation.amount
-      );
-
+      console.log("📖 pusher: ", currentDonationAmount + newDonation);
+    });
+    channel.bind("update.donation", (data: donation) => {
+      console.log("Received notification: ", data);
+      setnewDonation(data.donation.amount);
       console.log("📖 pusher: ", currentDonationAmount + newDonation);
     });
 
@@ -110,7 +123,6 @@ const BoxPage = () => {
   useEffect(() => {
     if (newDonation > 0) {
       sayThankYou();
-
       // setInterval(() =>
       setIsExploding(true);
       // }, 1300);
@@ -196,14 +208,11 @@ const BoxPage = () => {
                 <div className="flex flex-col gap-1 sm:gap-4">
                   <p className="text-white">المبلغ المتبقي</p>
                   <p className="text-lg sm:text-3xl font-bold text-white">
-                    {/* {boxData.donations_sum_amount
-                      ? numberWithCommas(boxData.target - currentDonationAmount)
-                      : numberWithCommas(boxData.target)}{" "} */}
                     {numberWithCommas(remainingDonationAmount)}
                     <span className="text-sm text-white mr-2">ر.س</span>
                   </p>
                 </div>
-                <div className="flex flex-col gap-1 sm:gap-4 text-white items-start px-0 sm:px-2 mb-0 mb-4 sm:mb-0">
+                <div className="flex flex-col gap-1 sm:gap-4 text-white items-start px-0 sm:px-2 mb-4 sm:mb-0">
                   <p className="text-white">المبغ المستهدف</p>
                   <p className="text-lg sm:text-3xl font-bold text-left">
                     {numberWithCommas(boxData.target)}
@@ -233,15 +242,18 @@ const BoxPage = () => {
                 </div>
                 <div className="h-full w-full">
                   <div className="w-8/12 mx-auto">
-                    <img
+                    {/* <img
                       src={`${mediaURl}${boxData?.qr_code}`}
                       alt="design"
                       className="w-full h-full"
-                    />
+                    /> */}
+                    {id && clientId && (
+                      <DonationQRCode clientId={clientId} id={id} />
+                    )}
                   </div>
                 </div>
 
-                <div className=" bg-zinc-100  w-full p-6  rounded-3xl rounded-t-none flex justify-center">
+                <div className=" bg-zinc-100 w-full p-6  rounded-3xl rounded-t-none flex justify-center">
                   <img
                     src={paymentMethodsSVG}
                     alt="payment methods logo"
