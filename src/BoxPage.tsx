@@ -61,6 +61,18 @@ const BoxPage = () => {
   const [isExploding, setIsExploding] = useState(false);
   const [clientId, setClientId] = useState<string>("");
 
+  function numberWithCommas(x: number) {
+    const num = Math.round(x);
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  function percentage(partial: number, total: number) {
+    return `${Math.round((100 * Math.round(partial)) / Math.round(total))}`;
+  }
+  useEffect(() => {
+    console.log("box data:", boxData);
+  }, [boxData]);
+
   const fetchDonationBoxData = async () => {
     SetLoading(false);
     try {
@@ -102,33 +114,43 @@ const BoxPage = () => {
       cluster: "ap2",
     });
     // const clientId = localStorage.getItem("clientId");
-    const channel = pusher.subscribe(`donation.${clientId}`);
-    channel.bind("update.donation", (data: donation) => {
-      console.log("Received notification: ", data);
-      setnewDonation(data.donation.amount);
-      console.log("📖 pusher: ", currentDonationAmount + newDonation);
+    console.log("client Id: == ", clientId);
+
+    const device_channel = pusher.subscribe(
+      `donation.notification.${clientId}`
+    );
+
+    device_channel.bind("update.donation.notification", (data: donation) => {
+      console.log("Received device_channel data: ", data);
+
+      sayThankYou();
+      setIsExploding(true);
     });
-    channel.bind("update.donation", (data: donation) => {
-      console.log("Received notification: ", data);
+
+    const hassalah_channel = pusher.subscribe(`donation.${id}`);
+    hassalah_channel.bind("update.donation", (data: donation) => {
+      console.log("Received hassalah_channel data: ", data);
       setnewDonation(data.donation.amount);
       console.log("📖 pusher: ", currentDonationAmount + newDonation);
     });
 
     return () => {
-      pusher.unsubscribe(`donation.${id}`);
-      pusher.disconnect();
+      device_channel.unbind_all();
+      device_channel.unsubscribe();
+      hassalah_channel.unbind_all();
+      hassalah_channel.unsubscribe();
     };
-  }, []);
+  }, [clientId]);
 
-  useEffect(() => {
-    if (newDonation > 0) {
-      sayThankYou();
-      // setInterval(() =>
-      setIsExploding(true);
-      // }, 1300);
-    }
-    console.log(newDonation);
-  }, [newDonation]);
+  // useEffect(() => {
+  //   if (newDonation > 0) {
+  //     sayThankYou();
+  //     // setInterval(() =>
+  //     setIsExploding(true);
+  //     // }, 1300);
+  //   }
+  //   console.log(newDonation);
+  // }, [isExploding]);
 
   useEffect(() => {
     const toGo = Math.max(
@@ -138,14 +160,23 @@ const BoxPage = () => {
     setremainingDonationAmount(toGo);
   }, [currentDonationAmount]);
 
-  function numberWithCommas(x: number) {
-    const num = Math.round(x);
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
+  // add by chat gpt to fix the sound block issue
+  useEffect(() => {
+    // Use type assertion for legacy support
+    const AudioContextClass =
+      window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return; // if neither exists, exit
 
-  function percentage(partial: number, total: number) {
-    return `${Math.round((100 * Math.round(partial)) / Math.round(total))}`;
-  }
+    const context = new AudioContextClass();
+    const resumeAudio = async () => {
+      if (context.state === "suspended") {
+        await context.resume();
+      }
+      window.removeEventListener("click", resumeAudio);
+    };
+
+    window.addEventListener("click", resumeAudio);
+  }, []);
 
   return (
     <>
@@ -193,7 +224,10 @@ const BoxPage = () => {
 
                 <ProgressBar
                   bgColor="#bada55"
-                  percentage={percentage(currentDonationAmount, boxData.target)}
+                  percentage={percentage(
+                    Number(currentDonationAmount),
+                    boxData.target
+                  )}
                 />
               </div>
 

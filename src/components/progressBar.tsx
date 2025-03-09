@@ -15,6 +15,7 @@ const ProgressBar: FC<ProgressBarProps> = ({
   const [width, setWidth] = useState<string>("0%");
   useEffect(() => {
     requestAnimationFrame(() => {
+      console.log("percentage width", percentage);
       setWidth(percentage);
     });
   }, [percentage]);
@@ -25,7 +26,7 @@ const ProgressBar: FC<ProgressBarProps> = ({
         className={`bar overflow-hidden flex h-full items-center justify-end rounded-full bg-gradient-to-l leading-none 
         max-w-full`}
         style={{
-          width: width,
+          width: `${width}%`,
           backgroundColor: bgColor,
         }}
       >
