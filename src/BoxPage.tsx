@@ -69,9 +69,7 @@ const BoxPage = () => {
   function percentage(partial: number, total: number) {
     return `${Math.round((100 * Math.round(partial)) / Math.round(total))}`;
   }
-  useEffect(() => {
-    console.log("box data:", boxData);
-  }, [boxData]);
+  useEffect(() => {}, [boxData]);
 
   const fetchDonationBoxData = async () => {
     SetLoading(false);
@@ -114,24 +112,21 @@ const BoxPage = () => {
       cluster: "ap2",
     });
     // const clientId = localStorage.getItem("clientId");
-    console.log("client Id: == ", clientId);
 
     const device_channel = pusher.subscribe(
       `donation.notification.${clientId}`
     );
 
     device_channel.bind("update.donation.notification", (data: donation) => {
-      console.log("Received device_channel data: ", data);
-
       sayThankYou();
       setIsExploding(true);
     });
 
     const hassalah_channel = pusher.subscribe(`donation.${id}`);
     hassalah_channel.bind("update.donation", (data: donation) => {
-      console.log("Received hassalah_channel data: ", data);
+      // console.log("Received hassalah_channel data: ", data);
       setnewDonation(data.donation.amount);
-      console.log("📖 pusher: ", currentDonationAmount + newDonation);
+      // console.log("📖 pusher: ", currentDonationAmount + newDonation);
     });
 
     return () => {
@@ -224,10 +219,7 @@ const BoxPage = () => {
 
                 <ProgressBar
                   bgColor="#bada55"
-                  percentage={percentage(
-                    Number(currentDonationAmount),
-                    boxData.target
-                  )}
+                  percentage={percentage(currentDonationAmount, boxData.target)}
                 />
               </div>
 
