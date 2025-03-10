@@ -5,6 +5,7 @@ import { useURLID } from "./useURLID";
 import axios from "axios";
 import Pusher from "pusher-js";
 import { v4 as uuidv4 } from "uuid";
+// import WebFont from "webfontloader";
 
 //extras
 import useSound from "use-sound";
@@ -60,6 +61,7 @@ const BoxPage = () => {
   const [remainingDonationAmount, setremainingDonationAmount] = useState(0);
   const [isExploding, setIsExploding] = useState(false);
   const [clientId, setClientId] = useState<string>("");
+  // const [customFont, setCustomFont] = useState("");
 
   function numberWithCommas(x: number) {
     const num = Math.round(x);
@@ -78,6 +80,9 @@ const BoxPage = () => {
       setBoxData(response.data.data);
       setassociationLogo(response.data.data.association.logo);
       setcurrentDonationAmount(response.data.data.donations_sum_amount);
+      if (response.data.data.custom_font) {
+        setCustomFont(response.data.data.custom_font);
+      }
     } catch (err) {
       const error = err as {
         response?: { data: unknown; status: number; headers: unknown };
@@ -94,6 +99,27 @@ const BoxPage = () => {
       // SetLoading(false);
     }
   };
+
+  // loading custom fonts using web fonts loader
+  // useEffect(() => {
+  //   if (customFont) {
+  //     WebFont.load({
+  //       google: {
+  //         families: [customFont + ":400,700", "Kufam:400,700"],
+  //       },
+  //       active: () => {
+  //         // Optionally update a CSS variable for your application
+  //         document.documentElement.style.setProperty(
+  //           "--main-font",
+  //           customFont.split(":")[0]
+  //         );
+  //       },
+  //       inactive: () => {
+  //         console.error("Failed to load the font:", customFont);
+  //       },
+  //     });
+  //   }
+  // }, [customFont]);
 
   useEffect(() => {
     fetchDonationBoxData();
@@ -207,7 +233,7 @@ const BoxPage = () => {
                   <span className="mt-1">{boxData.quran}</span>
                 </p>
 
-                <h1 className="text-2xl sm:text-5xl lg:text-6xl  xl:text-7xl font-kufam font-black text-white text-center md:text-right sm:leading-tight xl:leading-tight mb-6">
+                <h1 className="hero_title_CustomFont text-2xl sm:text-5xl lg:text-6xl  xl:text-7xl font-black text-white text-center md:text-right sm:leading-tight xl:leading-tight mb-6">
                   {boxData.hero_title}
                 </h1>
 
