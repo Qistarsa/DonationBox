@@ -118,16 +118,20 @@ const BoxPage = () => {
     );
 
     device_channel.bind("update.donation.notification", (data: donation) => {
+      console.log("Received device_channel data", data);
       sayThankYou();
       setIsExploding(true);
     });
 
     const hassalah_channel = pusher.subscribe(`donation.${id}`);
     hassalah_channel.bind("update.donation", (data: donation) => {
-      // console.log("Received hassalah_channel data: ", data);
+      console.log("Received hassalah_channel data: ", data);
       setnewDonation(data.donation.amount);
       // console.log("📖 pusher: ", currentDonationAmount + newDonation);
     });
+    // hassalah_channel.bind("update.data", () => {
+    //   fetchDonationBoxData();
+    // });
 
     return () => {
       device_channel.unbind_all();
@@ -136,16 +140,6 @@ const BoxPage = () => {
       hassalah_channel.unsubscribe();
     };
   }, [clientId]);
-
-  // useEffect(() => {
-  //   if (newDonation > 0) {
-  //     sayThankYou();
-  //     // setInterval(() =>
-  //     setIsExploding(true);
-  //     // }, 1300);
-  //   }
-  //   console.log(newDonation);
-  // }, [isExploding]);
 
   useEffect(() => {
     const toGo = Math.max(
@@ -209,7 +203,7 @@ const BoxPage = () => {
           <div className="w-full h-full grid md:grid-cols-2 max-sm:grid-cols-1 z-50 mx-auto justify-center items-center">
             <div className="px-8 flex flex-col gap-8 pt-8 sm:pt-0">
               <div className="">
-                <p className="text-md text-white font-kufam text-md mb-8 px-6 py-3 w-fit rounded-md border border-gray-400 bg-gray-50/30 backdrop-blur-lg flex gap-4 mx-auto md:mx-0">
+                <p className="text-md text-white font-kufam text-md mb-8 px-6 py-3 w-fit rounded-md border border-slate-50/10 bg-slate-100/30 backdrop-blur-lg flex gap-4 mx-auto md:mx-0">
                   <span className="mt-1">{boxData.quran}</span>
                 </p>
 
@@ -223,7 +217,7 @@ const BoxPage = () => {
                 />
               </div>
 
-              <div className="flex flex-wrap-reverse justify-between font-kufam  p-4 sm:p-6 border bg-black/20 border-gray-600 rounded-lg backdrop-blur-lg">
+              <div className="flex flex-wrap-reverse justify-between font-kufam  p-4 sm:p-6 border bg-slate-800/10 border-slate-50/20 rounded-lg backdrop-blur-lg">
                 <div className="flex flex-col gap-1 sm:gap-4">
                   <p className="text-white"> تم جمع</p>
                   <div className="text-lg sm:text-3xl font-bold text-white ">
@@ -244,6 +238,25 @@ const BoxPage = () => {
                     {numberWithCommas(boxData.target)}
                     <span className="text-sm mr-2">ر.س</span>
                   </p>
+                </div>
+              </div>
+              <div className="flex gap-8 items-center">
+                <div className="text-xl text-white flex flex-col items-center gap-5">
+                  <p className="text-sm">تبرع بأمان - ترخيص الجمعية </p>
+                  <img
+                    src="https://aytam.abna.sa/web/img/market.svg"
+                    alt="qrCode"
+                    width={120}
+                  />
+                </div>
+                {/* <p className="text-xl text-white">◆</p> */}
+                <div className="text-xl text-white flex flex-col items-center gap-5">
+                  <p className="text-sm"> ترخيص جمع التبرعات</p>
+                  <img
+                    src="https://aytam.abna.sa/web/img/market.svg"
+                    alt="qrCode"
+                    width={120}
+                  />
                 </div>
               </div>
             </div>

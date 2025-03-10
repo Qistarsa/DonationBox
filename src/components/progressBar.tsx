@@ -21,7 +21,7 @@ const ProgressBar: FC<ProgressBarProps> = ({
   }, [percentage]);
 
   return (
-    <div className="meter animate relative h-16 rounded-full border-2 border-white p-1 overflow-hidden">
+    <div className="meter animate relative h-16 rounded-full border-2 border-slate-100/60 p-1 overflow-hidden">
       <div
         className={`bar overflow-hidden flex h-full items-center justify-end rounded-full bg-gradient-to-l leading-none 
         max-w-full`}

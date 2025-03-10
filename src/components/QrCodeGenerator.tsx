@@ -1,4 +1,4 @@
-import { QRCodeCanvas } from "qrcode.react";
+import { QRCodeSVG } from "qrcode.react";
 interface Props {
   id: string | null;
   clientId: string | null;
@@ -11,7 +11,7 @@ const DonationQRCode: React.FC<Props> = ({ id, clientId }) => {
     <div>
       {clientId ? (
         <div className=" w-full ">
-          <QRCodeCanvas
+          <QRCodeSVG
             value={donationUrl}
             style={{ width: "100%", height: "100%" }}
           />
