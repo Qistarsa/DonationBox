@@ -233,6 +233,11 @@
   resolved "https://registry.npmjs.org/@emotion/memoize/-/memoize-0.7.1.tgz"
   integrity sha512-Qv4LTqO11jepd5Qmlp3M1YEjBumoTHcHFdgPTQ+sFlIL5myi/7xu/POwP7IRu6odBdmLXdtIs1D6TuW6kbwbbg==
 
+"@emran-alhaddad/saudi-riyal-font@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.npmjs.org/@emran-alhaddad/saudi-riyal-font/-/saudi-riyal-font-1.0.3.tgz"
+  integrity sha512-3gnzhyedKBQNvUsKs+4BBJb6ciSqZPzyKWavb8sNe7F2JaTT+m4FMK9WZ1qFMy97dSTDDnWm/kb3zvAm6QjBhQ==
+
 "@esbuild/darwin-x64@0.21.5":
   version "0.21.5"
   resolved "https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.21.5.tgz"

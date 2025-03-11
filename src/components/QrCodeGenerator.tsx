@@ -1,25 +1,24 @@
 import { QRCodeSVG } from "qrcode.react";
 interface Props {
-  id: string | null;
-  clientId: string | null;
+  url: string | null;
+  size: number | undefined;
 }
-const DonationQRCode: React.FC<Props> = ({ id, clientId }) => {
-  const donationUrl: string = clientId
-    ? `https://app.donations-box.com/donation/${id}?clientId=${clientId}`
-    : "";
+const QrCodeGenerator: React.FC<Props> = ({ url, size }) => {
+  const qrUrl: string = url ? url : "";
+  //   ? `https://app.donations-box.com/donation/${id}?clientId=${clientId}`
+  //   : "";
   return (
     <div>
-      {clientId ? (
-        <div className=" w-full ">
-          <QRCodeSVG
-            value={donationUrl}
-            style={{ width: "100%", height: "100%" }}
-          />
-        </div>
-      ) : (
-        <p>Loading QR Code...</p>
-      )}
+      <div className=" w-full ">
+        <QRCodeSVG
+          value={qrUrl}
+          size={size}
+          style={{ width: "100%", height: "100%" }}
+        />
+      </div>
+
+      {/* <p>Loading QR Code...</p> */}
     </div>
   );
 };
-export default DonationQRCode;
+export default QrCodeGenerator;

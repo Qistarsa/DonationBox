@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emran-alhaddad/saudi-riyal-font": "^1.0.3",
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
     "pusher-js": "^8.4.0-rc2",
