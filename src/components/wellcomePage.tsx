@@ -17,6 +17,8 @@ const wellcomePage = () => {
     if (inputID) {
       setSearchParams({ id: inputID });
     }
+    console.log(searchParams);
+
     if (!inputID.trim()) {
       setError("Please enter an ID");
       return;
