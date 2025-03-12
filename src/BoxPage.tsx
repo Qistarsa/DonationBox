@@ -51,7 +51,7 @@ const BoxPage: React.FC = () => {
   const [boxData, setBoxData] = useState<BoxData | null>(null);
   const [associationLogo, setAssociationLogo] = useState<string | null>(null);
   const [currentDonationAmount, setCurrentDonationAmount] = useState<number>(0);
-  const [newDonation, setNewDonation] = useState<number>(0);
+
   const [remainingDonationAmount, setRemainingDonationAmount] =
     useState<number>(0);
   const [isExploding, setIsExploding] = useState<boolean>(false);
@@ -63,7 +63,10 @@ const BoxPage: React.FC = () => {
   // const [associationLicenceUrl, setAssociationLicenceUrl] =
   //   useState<string>("");
   const hassalahID = id ? id : "";
-  const { donationData, deviceDonationData } = usePusher(clientId, hassalahID);
+  const { donationData, deviceDonationData, updateHassalah } = usePusher(
+    clientId,
+    hassalahID
+  );
 
   const numberWithCommas = (x: number) => {
     const num = Math.round(x);
@@ -73,7 +76,6 @@ const BoxPage: React.FC = () => {
   function percentage(partial: number, total: number) {
     return `${Math.round((100 * Math.round(partial)) / Math.round(total))}`;
   }
-  useEffect(() => {}, [boxData]);
 
   const fetchDonationBoxData = async () => {
     setIsLoading(true);
@@ -128,7 +130,20 @@ const BoxPage: React.FC = () => {
 
   useEffect(() => {
     fetchDonationBoxData();
-  }, [id, currentDonationAmount, newDonation]);
+  }, [id, updateHassalah]);
+
+  useEffect(() => {
+    console.log("======", donationData?.donation.amount);
+
+    if (donationData && donationData.donation && donationData.donation.amount) {
+      setCurrentDonationAmount(
+        (prevAmount) => Number(prevAmount) + donationData.donation.amount
+      );
+    }
+  }, [donationData]);
+  useEffect(() => {
+    console.log("====== cd :", currentDonationAmount);
+  }, [currentDonationAmount]);
 
   useEffect(() => {
     let storedId = localStorage.getItem("clientId") ?? uuidv4();
@@ -173,11 +188,9 @@ const BoxPage: React.FC = () => {
   // }, [clientId]);
 
   useEffect(() => {
-    if (donationData && deviceDonationData) {
+    if (deviceDonationData) {
       // console.log("===", donationData);
       // console.log("===device data ", deviceDonationData);
-      setNewDonation(donationData.donation.amount);
-
       if (deviceDonationData.clientId === clientId) {
         console.log(
           "donation ===",
@@ -185,14 +198,13 @@ const BoxPage: React.FC = () => {
           "clientId =",
           clientId
         );
-
         sayThankYou();
         setIsExploding(true);
         const timer = setTimeout(() => setIsExploding(false), 2000);
         return () => clearTimeout(timer);
       }
     }
-  }, [donationData, deviceDonationData]);
+  }, [deviceDonationData]);
 
   useEffect(() => {
     if (boxData) {
@@ -203,9 +215,6 @@ const BoxPage: React.FC = () => {
       setRemainingDonationAmount(toGo);
     }
   }, [boxData, currentDonationAmount]);
-  if (1 + 2 == 4) {
-    console.log(isLoading);
-  }
 
   // added by chat gpt to fix the sound block issue
   useEffect(() => {
@@ -224,18 +233,18 @@ const BoxPage: React.FC = () => {
     return () => window.removeEventListener("click", resumeAudio);
   }, []);
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="loading">
-  //       <div className="grid min-h-screen place-content-center">
-  //         <div className="flex items-center gap-2 text-gray-500">
-  //           <span className="h-6 w-6 block rounded-full border-4 border-t-blue-300 animate-spin" />
-  //           Loading...
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <div className="loading">
+        <div className="grid min-h-screen place-content-center">
+          <div className="flex items-center gap-2 text-gray-500">
+            <span className="h-6 w-6 block rounded-full border-4 border-t-blue-300 animate-spin" />
+            Loading...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!boxData) {
     return (

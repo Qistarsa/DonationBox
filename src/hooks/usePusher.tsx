@@ -12,7 +12,11 @@ interface DonationEvent {
 interface DviceEvent {
   clientId: string;
 }
-
+interface updateEvent {
+  update: {
+    serialNo: number;
+  };
+}
 interface PusherChannels {
   deviceChannel?: Channel;
   hassalahChannel?: Channel;
@@ -27,14 +31,22 @@ export const usePusher = (clientId: string | null, id: string) => {
   const [donationData, setDonationData] = useState<DonationEvent | null>(null);
   const [deviceDonationData, setDeviceDonationData] =
     useState<DviceEvent | null>(null);
+  const [updateHassalah, setUpdateHassalah] = useState<updateEvent | null>(
+    null
+  );
 
   const handleDeviceDonation = useCallback((data: DviceEvent) => {
     console.log("New device donation:", data);
     setDeviceDonationData(data);
   }, []);
   const handleCampaignDonation = useCallback((data: DonationEvent) => {
-    console.log("New Hassalah donation:", data);
+    console.log("Update Hassalah data:", data);
     setDonationData(data);
+  }, []);
+
+  const handleUpdateHassalahData = useCallback((data: updateEvent) => {
+    console.log("New Hassalah donation:", data);
+    setUpdateHassalah(data);
   }, []);
 
   useEffect(() => {
@@ -80,9 +92,14 @@ export const usePusher = (clientId: string | null, id: string) => {
 
     if (!channelsRef.current.hassalahChannel) {
       channelsRef.current.hassalahChannel = pusher.subscribe(`donation.${id}`);
+
       channelsRef.current.hassalahChannel.bind(
         "update.donation",
         handleCampaignDonation
+      );
+      channelsRef.current.hassalahChannel.bind(
+        "update.hassala",
+        handleUpdateHassalahData
       );
     }
 
@@ -115,5 +132,10 @@ export const usePusher = (clientId: string | null, id: string) => {
   );
   console.log("==== pusher donation data == ", deviceDonationData);
 
-  return { donationData, deviceDonationData, getConnectionStatus };
+  return {
+    donationData,
+    deviceDonationData,
+    updateHassalah,
+    getConnectionStatus,
+  };
 };
