@@ -39,6 +39,8 @@ interface BoxData {
   target: number;
   hero_title: string;
   qr_code: string;
+  primary_color: string;
+  text_color: string;
   media_type: string;
   donations_sum_amount: number;
   quran: string;
@@ -88,8 +90,8 @@ const BoxPage: React.FC = () => {
       setCurrentDonationAmount(data.donations_sum_amount);
       console.log(response.data.data);
 
-      setBrandColor(data.association.primary_color || brandColor);
-      setTextColor(data.association.text_color || textColor);
+      setBrandColor(data.primary_color || brandColor);
+      setTextColor(data.text_color || textColor);
       setCustomFont(data.font_name || customFont);
       setCertificationUrl(data.association.donation_license || "");
       // setAssociationLicenceUrl(data.association.association_license || "");
@@ -247,8 +249,16 @@ const BoxPage: React.FC = () => {
     );
   }
 
+  if (!id) {
+    return (
+      <div>
+        <WellcomePage />
+      </div>
+    );
+  }
+
   if (!boxData) {
-    return <div>{!id && <WellcomePage />}</div>;
+    return <div className="loading">no data </div>;
   }
 
   return (
