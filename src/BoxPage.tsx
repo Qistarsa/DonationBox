@@ -6,6 +6,7 @@ import axios from "axios";
 // import Pusher from "pusher-js";
 import { v4 as uuidv4 } from "uuid";
 import WebFont from "webfontloader";
+import WellcomePage from "./components/wellcomePage";
 
 //extras
 import useSound from "use-sound";
@@ -247,11 +248,7 @@ const BoxPage: React.FC = () => {
   }
 
   if (!boxData) {
-    return (
-      <div className="grid min-h-screen place-content-center">
-        <p className="text-gray-500">No data available</p>
-      </div>
-    );
+    return <div>{!id && <WellcomePage />}</div>;
   }
 
   return (
