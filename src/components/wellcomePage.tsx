@@ -30,7 +30,31 @@ const wellcomePage = () => {
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-gray-50 p-4">
       <div className="flex  gap-2 items-center mb-8">
-        <img className="h-6 w-6" src="./src/assets/logo.png" alt="Logo" />
+        <div className="h-6 w-6">
+          <svg
+            viewBox="0 0 236 236"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M94.9 10.8c-11.8 5.9-37.2 18.8-56.4 28.4C19.2 49 3 57.4 2.4 57.9 0 60.1 0 57.5 0 118.1s-.1 58 2.4 60.2c.6.6 26.3 13.7 57.1 29.3 53.8 27.1 56.1 28.3 58.5 28.3s4.7-1.1 58.5-28.3c30.8-15.6 56.5-28.7 57.1-29.3 2.4-2.2 2.4.4 2.4-60.2s.1-58-2.4-60.2c-.6-.6-26.3-13.7-57.1-29.2C133.2 6.9 120 .4 118.4.2c-2-.2-3.1.3-23.5 10.6M162 51.6c24.2 12.1 44 22.1 44 22.3s-19.8 10-44 22l-44 21.8-44-21.8c-24.2-12-44-21.9-44-22 0-.2 87.3-44.1 87.9-44.2.1-.1 19.9 9.8 44.1 21.9"
+              fill="url(#a)"
+            />
+            <defs>
+              <linearGradient
+                id="a"
+                x1="118"
+                y1=".17"
+                x2="119"
+                y2="144.5"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#bada55" />
+                <stop offset="1" stop-color="#bada55" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
         <span className="ml-3 font-bold text-base">حصالة</span>
       </div>
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
