@@ -1,4 +1,6 @@
 import { QRCodeSVG } from "qrcode.react";
+// import clsx
+import { clsx } from "clsx";
 interface Props {
   url: string | null;
   size: number | undefined;
@@ -9,12 +11,22 @@ const QrCodeGenerator: React.FC<Props> = ({ url, size }) => {
   //   : "";
   return (
     <div>
-      <div className=" w-full ">
-        <QRCodeSVG
-          value={qrUrl}
-          size={size}
-          style={{ width: "100%", height: "100%" }}
-        />
+      <div className="w-full h-full ">
+        <div
+          className={clsx(
+            "bg-white ",
+            !size ? "p-1 w-[80px] rounded-0" : "w-full"
+          )}
+        >
+          <QRCodeSVG
+            value={qrUrl}
+            size={size}
+            style={{
+              width: !size ? "100%" : "100%",
+              height: !size ? "100%" : "100%",
+            }}
+          />
+        </div>
       </div>
 
       {/* <p>Loading QR Code...</p> */}

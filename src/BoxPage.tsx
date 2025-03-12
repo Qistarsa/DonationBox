@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import ProgressBar from "./components/progressBar";
 import { useURLID } from "./useURLID";
 import axios from "axios";
-import Pusher from "pusher-js";
+// import Pusher from "pusher-js";
 import { v4 as uuidv4 } from "uuid";
 import WebFont from "webfontloader";
 
@@ -12,6 +12,7 @@ import useSound from "use-sound";
 import thankYou from "./assets/sounds/thankyou.mp3";
 import ConfettiExplosion from "react-confetti-explosion";
 import QrCodeGenerator from "./components/QrCodeGenerator";
+import { usePusher } from "./hooks/usePusher";
 
 // import * as dotenv from "dotenv";
 // dotenv.config();
@@ -48,7 +49,7 @@ interface donation {
   };
 }
 
-const BoxPage = () => {
+const BoxPage: React.FC = () => {
   const [sayThankYou] = useSound(thankYou);
   const { id } = useURLID();
 
@@ -65,8 +66,10 @@ const BoxPage = () => {
   const [brandColor, setBrandColor] = useState<string>("#bada55");
   const [textColor, setTextColor] = useState<string>("#ffff");
   const [certificationUrl, setCertificationUrl] = useState<string>("");
-  const [associationLicenceUrl, setAssociationLicenceUrl] =
-    useState<string>("");
+  // const [associationLicenceUrl, setAssociationLicenceUrl] =
+  //   useState<string>("");
+  const hassalahID = id ? id : "";
+  const { donationData, deviceDonationData } = usePusher(clientId, hassalahID);
 
   const numberWithCommas = (x: number) => {
     const num = Math.round(x);
@@ -92,7 +95,7 @@ const BoxPage = () => {
       setTextColor(data.association.text_color || textColor);
       setCustomFont(data.font_name || customFont);
       setCertificationUrl(data.association.donation_license || "");
-      setAssociationLicenceUrl(data.association.association_license || "");
+      // setAssociationLicenceUrl(data.association.association_license || "");
     } catch (err) {
       const error = err as {
         response?: { data: unknown; status: number; headers: unknown };
@@ -141,39 +144,61 @@ const BoxPage = () => {
     setClientId(storedId);
   }, []);
 
+  // useEffect(() => {
+  //   const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
+  //     cluster: "ap2",
+  //   });
+  //   // const clientId = localStorage.getItem("clientId");
+
+  //   const device_channel = pusher.subscribe(
+  //     `donation.notification.${clientId}`
+  //   );
+
+  //   device_channel.bind("update.donation.notification", (data: donation) => {
+  //     console.log("Received device_channel data", data);
+  //     sayThankYou();
+  //     setIsExploding(true);
+  //   });
+
+  //   const hassalah_channel = pusher.subscribe(`donation.${id}`);
+  //   hassalah_channel.bind("update.donation", (data: donation) => {
+  //     console.log("Received hassalah_channel data: ", data);
+  //     setNewDonation(data.donation.amount);
+  //     // console.log("📖 pusher: ", currentDonationAmount + newDonation);
+  //   });
+  //   // hassalah_channel.bind("update.data", () => {
+  //   //   fetchDonationBoxData();
+  //   // });
+
+  //   return () => {
+  //     device_channel.unbind_all();
+  //     device_channel.unsubscribe();
+  //     hassalah_channel.unbind_all();
+  //     hassalah_channel.unsubscribe();
+  //   };
+  // }, [clientId]);
+
   useEffect(() => {
-    const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
-      cluster: "ap2",
-    });
-    // const clientId = localStorage.getItem("clientId");
+    if (donationData && deviceDonationData) {
+      // console.log("===", donationData);
+      // console.log("===device data ", deviceDonationData);
+      setNewDonation(donationData.donation.amount);
 
-    const device_channel = pusher.subscribe(
-      `donation.notification.${clientId}`
-    );
+      if (deviceDonationData.clientId === clientId) {
+        console.log(
+          "donation ===",
+          deviceDonationData.clientId,
+          "clientId =",
+          clientId
+        );
 
-    device_channel.bind("update.donation.notification", (data: donation) => {
-      console.log("Received device_channel data", data);
-      sayThankYou();
-      setIsExploding(true);
-    });
-
-    const hassalah_channel = pusher.subscribe(`donation.${id}`);
-    hassalah_channel.bind("update.donation", (data: donation) => {
-      console.log("Received hassalah_channel data: ", data);
-      setNewDonation(data.donation.amount);
-      // console.log("📖 pusher: ", currentDonationAmount + newDonation);
-    });
-    // hassalah_channel.bind("update.data", () => {
-    //   fetchDonationBoxData();
-    // });
-
-    return () => {
-      device_channel.unbind_all();
-      device_channel.unsubscribe();
-      hassalah_channel.unbind_all();
-      hassalah_channel.unsubscribe();
-    };
-  }, [clientId]);
+        sayThankYou();
+        setIsExploding(true);
+        const timer = setTimeout(() => setIsExploding(false), 2000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [donationData, deviceDonationData]);
 
   useEffect(() => {
     if (boxData) {
@@ -202,18 +227,18 @@ const BoxPage = () => {
     return () => window.removeEventListener("click", resumeAudio);
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="loading">
-        <div className="grid min-h-screen place-content-center">
-          <div className="flex items-center gap-2 text-gray-500">
-            <span className="h-6 w-6 block rounded-full border-4 border-t-blue-300 animate-spin" />
-            Loading...
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="loading">
+  //       <div className="grid min-h-screen place-content-center">
+  //         <div className="flex items-center gap-2 text-gray-500">
+  //           <span className="h-6 w-6 block rounded-full border-4 border-t-blue-300 animate-spin" />
+  //           Loading...
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   if (!boxData) {
     return (
@@ -304,9 +329,9 @@ const BoxPage = () => {
             </div>
           </div>
 
-          <div className="flex gap-8 items-center">
+          <div className="flex ">
             <div className="text-xl text-white flex flex-col items-center gap-5">
-              {associationLicenceUrl && (
+              {/* {associationLicenceUrl && (
                 <>
                   <p className="text-sm">تبرع بأمان - ترخيص الجمعية</p>
                   <div className="p-2 bg-white rounded-md shadow-md">
@@ -316,18 +341,16 @@ const BoxPage = () => {
                     />
                   </div>
                 </>
-              )}
+              )} */}
             </div>
-            <div className="text-xl text-white flex flex-col items-center gap-5">
+            <div className="text-xl text-white flex flex-col  gap-5">
               {certificationUrl && (
                 <>
-                  <p className="text-sm">ترخيص جمع التبرعات</p>
-                  <div className="p-2 bg-white rounded-md shadow-md">
-                    <QrCodeGenerator
-                      url={`${mediaURl}/${certificationUrl}`}
-                      size={120}
-                    />
-                  </div>
+                  <p className="text-sm">ترخيص جمع التبرعات </p>
+                  <QrCodeGenerator
+                    url={`${mediaURl}/${certificationUrl}`}
+                    size={undefined}
+                  />
                 </>
               )}
             </div>
