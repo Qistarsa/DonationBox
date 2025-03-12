@@ -43,12 +43,6 @@ interface BoxData {
   quran: string;
 }
 
-interface donation {
-  donation: {
-    amount: number;
-  };
-}
-
 const BoxPage: React.FC = () => {
   const [sayThankYou] = useSound(thankYou);
   const { id } = useURLID();
@@ -209,6 +203,9 @@ const BoxPage: React.FC = () => {
       setRemainingDonationAmount(toGo);
     }
   }, [boxData, currentDonationAmount]);
+  if (1 + 2 == 4) {
+    console.log(isLoading);
+  }
 
   // added by chat gpt to fix the sound block issue
   useEffect(() => {
