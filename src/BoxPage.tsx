@@ -283,7 +283,7 @@ const BoxPage: React.FC = () => {
       )}
 
       <div className="-z-10 absolute top-0 left-0 h-screen w-screen bg-gradient-to-t from-black/80 to-black/30" />
-      <div className="w-full h-full grid md:grid-cols-2 max-sm:grid-cols-1 z-50 mx-auto justify-center items-center">
+      <div className="w-full h-full grid md:grid-cols-2 max-sm:grid-cols-1 z-50 mx-auto justify-center items-start pt-4 lg:pt-0 lg:items-center">
         <div className="px-8 flex flex-col gap-8 pt-8 sm:pt-0">
           <div>
             <p className="text-md text-white font-kufam mb-8 px-6 py-3 w-fit rounded-md border border-slate-50/10 bg-slate-100/30 backdrop-blur-lg flex gap-4 mx-auto md:mx-0">
@@ -292,7 +292,7 @@ const BoxPage: React.FC = () => {
 
             <h1
               style={{ color: textColor }}
-              className="hero_title_CustomFont text-2xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-center md:text-right sm:leading-tight xl:leading-normal mb-6"
+              className="hero_title_CustomFont  font-black text-center md:text-right mb-6 text-[1rem] sm:text-[1.5rem] md:text-[1.8rem] lg:text-[3rem] xl:text-[4rem]"
             >
               {boxData.hero_title}
             </h1>
