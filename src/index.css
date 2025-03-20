@@ -4,7 +4,11 @@
 
 :root {
   --main-font: "Roboto", sans-serif;
+  --secondary-font: "Roboto", sans-serif;
 }
 .hero_title_CustomFont {
   font-family: var(--main-font), sans-serif;
+}
+.secondary_font {
+  font-family: var(--secondary-font), sans-serif;
 }
