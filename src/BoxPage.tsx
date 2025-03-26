@@ -9,8 +9,8 @@ import WebFont from "webfontloader";
 import WellcomePage from "./components/wellcomePage";
 
 //extras
-import useSound from "use-sound";
-import thankYou from "./assets/sounds/thankyou.mp3";
+// import useSound from "use-sound";
+// import thankYou from "./assets/sounds/thankyou.mp3";
 import ConfettiExplosion from "react-confetti-explosion";
 import QrCodeGenerator from "./components/QrCodeGenerator";
 import { usePusher } from "./hooks/usePusher";
@@ -47,7 +47,7 @@ interface BoxData {
 }
 
 const BoxPage: React.FC = () => {
-  const [sayThankYou] = useSound(thankYou);
+  // const [sayThankYou] = useSound(thankYou);
   const { id } = useURLID();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -201,7 +201,7 @@ const BoxPage: React.FC = () => {
           "clientId =",
           clientId
         );
-        sayThankYou();
+        // sayThankYou();
         setIsExploding(true);
         const timer = setTimeout(() => setIsExploding(false), 2000);
         return () => clearTimeout(timer);
