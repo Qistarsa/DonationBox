@@ -42,6 +42,7 @@ interface BoxData {
   primary_color: string;
   text_color: string;
   media_type: string;
+  secondary_font: string;
   donations_sum_amount: number;
   quran: string;
 }
@@ -60,6 +61,7 @@ const BoxPage: React.FC = () => {
   const [isExploding, setIsExploding] = useState<boolean>(false);
   const [clientId, setClientId] = useState<string>("");
   const [customFont, setCustomFont] = useState<string>("");
+  const [secondaryFont, setSecondaryFont] = useState("");
   const [brandColor, setBrandColor] = useState<string>("#bada55");
   const [textColor, setTextColor] = useState<string>("#ffff");
   const [certificationUrl, setCertificationUrl] = useState<string>("");
@@ -93,6 +95,7 @@ const BoxPage: React.FC = () => {
       setBrandColor(data.primary_color || brandColor);
       setTextColor(data.text_color || textColor);
       setCustomFont(data.font_name || customFont);
+      setSecondaryFont(data.secondary_font || secondaryFont);
       setCertificationUrl(data.association.donation_license || "");
       // setAssociationLicenceUrl(data.association.association_license || "");
     } catch (err) {
@@ -114,15 +117,24 @@ const BoxPage: React.FC = () => {
 
   // loading custom fonts using web fonts loader
   useEffect(() => {
-    if (customFont) {
+    if (customFont && secondaryFont) {
       console.log("==", customFont);
+      console.log("==", secondaryFont);
 
       WebFont.load({
         google: {
-          families: [customFont + ":400,700", "Kufam:400,700"],
+          families: [
+            `${customFont}:400,700`,
+            `${secondaryFont}:400,700`, // Add secondary font
+            "Kufam:400,700",
+          ],
         },
         active: () => {
           document.documentElement.style.setProperty("--main-font", customFont);
+          document.documentElement.style.setProperty(
+            "--secondary-font",
+            secondaryFont
+          );
         },
         inactive: () => {
           console.error("Failed to load the font:", customFont);
@@ -155,40 +167,6 @@ const BoxPage: React.FC = () => {
     }
     setClientId(storedId);
   }, []);
-
-  // useEffect(() => {
-  //   const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
-  //     cluster: "ap2",
-  //   });
-  //   // const clientId = localStorage.getItem("clientId");
-
-  //   const device_channel = pusher.subscribe(
-  //     `donation.notification.${clientId}`
-  //   );
-
-  //   device_channel.bind("update.donation.notification", (data: donation) => {
-  //     console.log("Received device_channel data", data);
-  //     sayThankYou();
-  //     setIsExploding(true);
-  //   });
-
-  //   const hassalah_channel = pusher.subscribe(`donation.${id}`);
-  //   hassalah_channel.bind("update.donation", (data: donation) => {
-  //     console.log("Received hassalah_channel data: ", data);
-  //     setNewDonation(data.donation.amount);
-  //     // console.log("📖 pusher: ", currentDonationAmount + newDonation);
-  //   });
-  //   // hassalah_channel.bind("update.data", () => {
-  //   //   fetchDonationBoxData();
-  //   // });
-
-  //   return () => {
-  //     device_channel.unbind_all();
-  //     device_channel.unsubscribe();
-  //     hassalah_channel.unbind_all();
-  //     hassalah_channel.unsubscribe();
-  //   };
-  // }, [clientId]);
 
   useEffect(() => {
     if (deviceDonationData) {
@@ -286,7 +264,7 @@ const BoxPage: React.FC = () => {
       <div className="w-full h-full grid md:grid-cols-2 max-sm:grid-cols-1 z-50 mx-auto justify-center items-start pt-4 lg:pt-0 lg:items-center">
         <div className="px-8 flex flex-col gap-8 pt-8 sm:pt-0">
           <div>
-            <p className="text-md text-white font-kufam mb-8 px-6 py-3 w-fit rounded-md border border-slate-50/10 bg-slate-100/30 backdrop-blur-lg flex gap-4 mx-auto md:mx-0">
+            <p className="secondary_font text-md text-white font-kufam mb-8 px-6 py-3 w-fit rounded-md border border-slate-50/10 bg-slate-100/30 backdrop-blur-lg flex gap-4 mx-auto md:mx-0">
               <span className="mt-1">{boxData.quran}</span>
             </p>
 
